@@ -1,0 +1,28 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "SAGA — Российские решения самообслуживания",
+  description = "АО «САГА Технологии» — банкоматы, кассы самообслуживания и системы управления очередью."
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0f1115" />
+    <link rel="icon" href="/assets/logos/saga_logo_black.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
