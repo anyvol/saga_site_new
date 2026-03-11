@@ -2,5 +2,5 @@ import { defineConfig } from 'astro/config';
 
 export default defineConfig({
   site: 'https://anyvol.github.io',
-  base: '',
+  base: '/saga-site-new/',
 });
