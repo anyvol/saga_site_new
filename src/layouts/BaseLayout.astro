@@ -10,6 +10,8 @@ const {
   title = "SAGA — Российские решения самообслуживания",
   description = "АО «САГА Технологии» — банкоматы, кассы самообслуживания и системы управления очередью."
 } = Astro.props;
+
+const favicon = `${import.meta.env.BASE_URL.replace(/\/+$/, "")}/assets/logos/saga_logo_black.svg`;
 ---
 
 <!doctype html>
@@ -20,7 +22,7 @@ const {
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0f1115" />
-    <link rel="icon" href="/assets/logos/saga_logo_black.svg" type="image/svg+xml" />
+    <link rel="icon" href={favicon} type="image/svg+xml" />
   </head>
   <body>
     <slot />
