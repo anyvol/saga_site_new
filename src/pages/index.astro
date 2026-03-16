@@ -1,5 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { deviceSections } from "../data/categories";
+import { getProductsByCategory, type Product } from "../data/products";
+import { Image } from "astro:assets";
 
 const base = import.meta.env.BASE_URL;
 const withBase = (path: string) =>
@@ -20,10 +23,10 @@ const trustItems = [
 ];
 
 const badges = [
-  { name: "Резидент", image: withBase("/assets/logos/Rezident_TM.png") },
-  { name: "Национальные чемпионы", image: withBase("/assets/logos/national_champions.png") },
-  { name: "КВТ", image: withBase("/assets/logos/logo_kvt.png") },
-  { name: "ANDO", image: withBase("/assets/logos/logo-small_ando_v3.png") },
+  { name: "Резидент технополис «Москва»", image: withBase("/assets/logos/Rezident_TM.png") },
+  { name: "Член ассоциации быстрорастущих технологических компаний «Национальные чемпионы»", image: withBase("/assets/logos/national_champions.png") },
+  { name: "Партнёр консорциума Вычислительная техника", image: withBase("/assets/logos/logo_kvt.png") },
+  { name: "Член ассоциации организаций в сфере наличного денежного обращения, инкассации и перевозки ценностей", image: withBase("/assets/logos/logo-small_ando_v3.png") },
 ];
 
 const contactIcons = [
@@ -54,395 +57,6 @@ const contactIcons = [
   },
 ];
 
-const deviceSections = [
-  {
-    id: "atm",
-    navLabel: "Банкоматы",
-    eyebrow: "Банкоматы",
-    title: "Банкоматы SAGA с экранами 19″, 27″ и 32″.",
-    intro:
-      "Основная линейка для банковских отделений, зон 24/7 и инфраструктурных площадок. Внутри раздела — горизонтальный выбор форм-фактора, а переход между типами устройств происходит вертикальным свайпом.",
-    sectionBooklet: withBase("/assets/booklets/atm_booklet.pdf"),
-    features: [
-      {
-        type: "video",
-        src: withBase("/assets/pres_atm_saga_1.mp4"),
-        title: "Крупный план узлов и эргономики",
-        text: "Видео работает как продающий первый экран категории: показывает важные элементы устройства, сервисный доступ и промышленную подачу продукта.",
-      },
-      {
-        type: "video",
-        src: withBase("/assets/pres_atm_saga_2.mp4"),
-        title: "Преимущества поверх видео",
-        text: "Поверх ролика выводим короткие преимущества: надёжность, чистая интеграция в интерьер, удобство обслуживания и готовность к масштабированию сети.",
-      },
-    ],
-    slides: [
-      {
-        title: "SAGA ATM 19″",
-        subtitle: "19-дюймовый экран",
-        text: "Компактная конфигурация для точек, где важны глубина установки, читаемость интерфейса и аккуратная интеграция в пространство.",
-        image: withBase("/assets/atms/saga_atm_19_front.jpg"),
-        bullets: [
-          "Компактный форм-фактор.",
-          "Подходит для ограниченных зон размещения.",
-          "Чистая фронтальная подача интерфейса.",
-          "Единая визуальная логика линейки SAGA.",
-        ],
-        details: [
-          "Хорошо подходит для проектов, где важны небольшой footprint и понятный пользовательский сценарий.",
-          "Такую модель удобно показывать как входной формат для пилотных внедрений и компактных отделений.",
-        ],
-        booklet: withBase("/assets/booklets/atm_booklet.pdf"),
-      },
-      {
-        title: "SAGA ATM 27″",
-        subtitle: "27-дюймовый экран",
-        text: "Баланс между выразительной цифровой поверхностью, удобством интерфейса и универсальностью применения в массовых сценариях.",
-        image: withBase("/assets/atms/saga_atm_27_front.jpg"),
-        bullets: [
-          "Универсальный формат для большинства сценариев.",
-          "Больше пространства под интерфейс и подсказки.",
-          "Хорошо смотрится в современных банковских зонах.",
-          "Удобен для презентации линейки коллегам и заказчикам.",
-        ],
-        details: [
-          "Это центральная модель линейки для демонстрации бренда и пользовательского сценария.",
-          "Подходит как основной акцентный вариант в продуктовой витрине сайта.",
-        ],
-        booklet: withBase("/assets/booklets/atm_booklet.pdf"),
-      },
-      {
-        title: "SAGA ATM 32″",
-        subtitle: "32-дюймовый экран",
-        text: "Крупный фронт с максимальной визуальной выразительностью для флагманских пространств и проектов, где важен сильный digital-first образ.",
-        image: withBase("/assets/atms/saga_atm_32_front.jpg"),
-        bullets: [
-          "Флагманский визуальный формат.",
-          "Максимально заметная цифровая поверхность.",
-          "Подходит для современных high-visibility зон.",
-          "Сильная презентационная подача в каталоге и на экране переговоров.",
-        ],
-        details: [
-          "Эта конфигурация особенно хорошо работает в презентационном контенте и на больших дисплеях.",
-          "На сайте её удобно использовать как финальный акцент в горизонтальной линейке банкоматов.",
-        ],
-        booklet: withBase("/assets/booklets/atm_booklet.pdf"),
-      },
-    ],
-  },
-  {
-    id: "qms",
-    navLabel: "СУО",
-    eyebrow: "Системы управления очередью",
-    title: "СУО в нескольких ориентациях и диагоналях.",
-    intro:
-      "Здесь горизонтальный свайп переключает конкретные конфигурации экранов. Это позволяет быстро сравнить форм-факторы внутри одной категории без ухода на отдельные страницы.",
-    sectionBooklet: withBase("/assets/booklets/qms_booklet.pdf"),
-    slides: [
-      {
-        title: "SYO 19″",
-        subtitle: "19″ вертикальная ориентация",
-        text: "Базовый вертикальный формат для навигации потока, выдачи талонов и понятного сценария взаимодействия в зонах обслуживания.",
-        image: withBase("/assets/qms/syo_19_vertical_saga_front.jpg"),
-        bullets: [
-          "Вертикальная ориентация интерфейса.",
-          "Хорошая читаемость ключевых действий.",
-          "Подходит для компактных клиентских зон.",
-          "Легко интегрируется в единую систему обслуживания.",
-        ],
-        details: [
-          "Вертикальная композиция удобна, когда важно вести пользователя сверху вниз по шагам.",
-          "Такой формат хорошо работает в лаконичных пространствах с направленным потоком людей.",
-        ],
-        booklet: withBase("/assets/booklets/qms_booklet.pdf"),
-      },
-      {
-        title: "SYO 19″ Wide",
-        subtitle: "19″ горизонтальная ориентация",
-        text: "Горизонтальный формат для сценариев, где ширина интерфейса и визуальное разделение блоков важнее высоты.",
-        image: withBase("/assets/qms/syo_19_horisontal_saga_front_2.jpg"),
-        bullets: [
-          "Горизонтальная композиция интерфейса.",
-          "Удобна для широких шаблонов контента.",
-          "Хороша для сценариев с несколькими зонами выбора.",
-          "Выглядит технологично и современно.",
-        ],
-        details: [
-          "Широкий формат помогает аккуратно развести ключевые CTA и поясняющий контент.",
-          "Это удобный вариант для интерфейсов с несколькими равноправными действиями.",
-        ],
-        booklet: withBase("/assets/booklets/qms_booklet.pdf"),
-      },
-      {
-        title: "SYO 21″",
-        subtitle: "21″ вертикальная ориентация",
-        text: "Увеличенная вертикальная поверхность для более свободной типографики и более заметной навигации.",
-        image: withBase("/assets/qms/syo_21_vertical_saga_front.jpg"),
-        bullets: [
-          "Больше пространства под интерфейс.",
-          "Улучшенная визуальная иерархия.",
-          "Удобна для контента с подсказками.",
-          "Подходит для современных сервисных офисов.",
-        ],
-        details: [
-          "21-дюймовая диагональ помогает сделать интерфейс визуально легче и чище.",
-          "Такой вариант подходит для проектов, где важен запас по размеру UI без перехода к очень крупным экранам.",
-        ],
-        booklet: withBase("/assets/booklets/qms_booklet.pdf"),
-      },
-      {
-        title: "SYO 21″ Wide",
-        subtitle: "21″ горизонтальная ориентация",
-        text: "Сбалансированный формат для широких компоновок, быстрых сценариев выбора и современной графической подачи.",
-        image: withBase("/assets/qms/syo_21_horisontal_saga_front_2.jpg"),
-        bullets: [
-          "Широкий и читаемый интерфейс.",
-          "Подходит для многошаговых сценариев выбора.",
-          "Удобен для богатых UI-компоновок.",
-          "Хорошо выглядит в премиальных зонах обслуживания.",
-        ],
-        details: [
-          "Это один из самых универсальных вариантов для красивой цифровой подачи.",
-          "На сайте его удобно показывать как промежуточный баланс между компактностью и выразительностью.",
-        ],
-        booklet: withBase("/assets/booklets/qms_booklet.pdf"),
-      },
-      {
-        title: "SYO 27″",
-        subtitle: "27″ вертикальная ориентация",
-        text: "Крупный вертикальный формат для заметных клиентских точек и визуально сильной организации очереди.",
-        image: withBase("/assets/qms/syo_27_vertical_saga_front.jpg"),
-        bullets: [
-          "Крупный экран для уверенной навигации.",
-          "Выразительная digital-поверхность.",
-          "Подходит для публичных пространств.",
-          "Даёт более премиальную подачу сервиса.",
-        ],
-        details: [
-          "Такой формат удобно использовать там, где оборудование должно быть заметно с расстояния.",
-          "Он хорошо показывает зрелость продукта и уверенность бренда в визуальной коммуникации.",
-        ],
-        booklet: withBase("/assets/booklets/qms_booklet.pdf"),
-      },
-      {
-        title: "SYO 32″",
-        subtitle: "32″ вертикальная ориентация",
-        text: "Флагманская конфигурация СУО для просторных площадок и проектов, где интерфейс должен быть максимально заметным.",
-        image: withBase("/assets/qms/syo_32_vertical_saga_front.jpg"),
-        bullets: [
-          "Флагман внутри категории СУО.",
-          "Максимальная заметность интерфейса.",
-          "Подходит для публичных и загруженных площадок.",
-          "Сильный визуальный образ на сайте и в презентации.",
-        ],
-        details: [
-          "32-дюймовый вертикальный экран работает как яркий центр клиентского сценария.",
-          "На уровне UX это самый выразительный вариант для пространства с высоким трафиком.",
-        ],
-        booklet: withBase("/assets/booklets/qms_booklet.pdf"),
-      },
-    ],
-  },
-  {
-    id: "ssc",
-    navLabel: "Кассы СО",
-    eyebrow: "Кассы самообслуживания",
-    title: "Кассы самообслуживания для ритейла и сервисных сценариев.",
-    intro:
-      "Внутри — несколько визуальных компоновок устройства. Горизонтальный паттерн помогает сравнить варианты без перегрузки пользователя деталями на одном экране.",
-    sectionBooklet: withBase("/assets/booklets/ssc_booklet.pdf"),
-    slides: [
-      {
-        title: "SSC 21",
-        subtitle: "Конфигурация 1",
-        text: "Базовая компоновка кассы самообслуживания с аккуратной подачей интерфейса, периферии и пользовательской зоны работы.",
-        image: withBase("/assets/ssc/ssc_21_front_1.jpg"),
-        bullets: [
-          "Подходит для ритейла.",
-          "Удобная фронтальная композиция.",
-          "Поддержка сценариев самостоятельной оплаты.",
-          "Чистая интеграция в торговую среду.",
-        ],
-        details: [
-          "Такую карточку удобно использовать как первый вход в категорию касс самообслуживания.",
-          "Она показывает основу сценария без перегрузки техническими деталями.",
-        ],
-        booklet: withBase("/assets/booklets/ssc_booklet.pdf"),
-      },
-      {
-        title: "SSC 21",
-        subtitle: "Конфигурация 2",
-        text: "Вариант с иным визуальным балансом рабочей поверхности и пользовательской зоны взаимодействия.",
-        image: withBase("/assets/ssc/ssc_21_front_2.jpg"),
-        bullets: [
-          "Выразительная фронтальная подача.",
-          "Подходит для современных торговых пространств.",
-          "Легко считывается пользователем.",
-          "Хорошо смотрится в digital-каталоге.",
-        ],
-        details: [
-          "Эта версия помогает показать, что продуктовая линейка не ограничивается одним корпусом.",
-          "Горизонтальное сравнение внутри категории хорошо работает на мобильных и больших экранах.",
-        ],
-        booklet: withBase("/assets/booklets/ssc_booklet.pdf"),
-      },
-      {
-        title: "SSC 21",
-        subtitle: "Конфигурация 3",
-        text: "Ещё один вариант визуальной компоновки для демонстрации гибкости проектирования и сценариев внедрения.",
-        image: withBase("/assets/ssc/ssc_21_front_3.jpg"),
-        bullets: [
-          "Показывает вариативность линейки.",
-          "Подходит для презентации проектных сценариев.",
-          "Сохраняет единый брендовый язык.",
-          "Удобен для сравнения в рамках одной категории.",
-        ],
-        details: [
-          "Такой слайд усиливает ощущение продуктовой зрелости и системности разработки.",
-          "Для UX это даёт пользователю понятный паттерн выбора между конфигурациями.",
-        ],
-        booklet: withBase("/assets/booklets/ssc_booklet.pdf"),
-      },
-    ],
-  },
-  {
-    id: "adm",
-    navLabel: "ADM",
-    eyebrow: "Автоматические депозитные машины",
-    title: "ADM: отдельная продуктовая категория внутри витрины.",
-    intro:
-      "Категория собрана как самостоятельный вертикальный экран, а варианты внутри показываются в едином горизонтальном паттерне, чтобы UX оставался предсказуемым во всём каталоге.",
-    sectionBooklet: null,
-    slides: [
-      {
-        title: "SAGA S8",
-        subtitle: "Вариант 1",
-        text: "Фронтальный ракурс ADM для демонстрации общего силуэта, визуального баланса корпуса и цифровой поверхности.",
-        image: withBase("/assets/adm/s8/saga_s8_1.jpg"),
-        bullets: [
-          "Отдельная категория для депозитных сценариев.",
-          "Чистая фронтальная презентация.",
-          "Единый визуальный язык бренда.",
-          "Подходит для продуктовой витрины и переговорных экранов.",
-        ],
-        details: [
-          "Первый слайд лучше работает как вход в категорию и даёт пользователю базовое визуальное понимание продукта.",
-          "Для коммерческой презентации такой ракурс особенно полезен как общий overview.",
-        ],
-        booklet: null,
-      },
-      {
-        title: "SAGA S8",
-        subtitle: "Вариант 2",
-        text: "Дополнительный ракурс для более полного восприятия изделия и проектной подачи категории ADM.",
-        image: withBase("/assets/adm/s8/saga_s8_2.jpg"),
-        bullets: [
-          "Дополняет первый обзорный слайд.",
-          "Помогает показать продукт объёмнее.",
-          "Работает как вторая ступень сравнения.",
-          "Поддерживает единый UX внутри каталога.",
-        ],
-        details: [
-          "Второй кадр усиливает ощущение реального промышленного объекта, а не абстрактной карточки.",
-          "Это повышает качество восприятия продукта при первом знакомстве.",
-        ],
-        booklet: null,
-      },
-      {
-        title: "SAGA S8",
-        subtitle: "Вариант 3",
-        text: "Визуальный материал для раскрытия деталей и расширения представления о линейке ADM.",
-        image: withBase("/assets/adm/s8/saga_s8_3.PNG"),
-        bullets: [
-          "Расширяет визуальную библиотеку категории.",
-          "Подходит для digital-витрины.",
-          "Усиливает доверие к продуктовой проработке.",
-          "Позволяет пользователю пролистать категорию горизонтально.",
-        ],
-        details: [
-          "Третий слайд делает категорию полноценной и не даёт ей выглядеть как одиночная карточка.",
-          "Это важно для ощущения масштабности продуктовой линейки.",
-        ],
-        booklet: null,
-      },
-      {
-        title: "SAGA S8",
-        subtitle: "Вариант 4",
-        text: "Финальный слайд категории для завершённого восприятия продукта и полноценного сравнения внутри ADM.",
-        image: withBase("/assets/adm/s8/saga_s8_4.PNG"),
-        bullets: [
-          "Завершает визуальный ряд категории.",
-          "Подходит для последнего акцента перед следующим устройством.",
-          "Усиливает эффект продуктовой зрелости.",
-          "Сохраняет ритм горизонтального карусельного UX.",
-        ],
-        details: [
-          "Такой завершающий слайд хорошо работает перед вертикальным переходом к следующей категории.",
-          "Пользователь получает ощущение законченного просмотра категории ADM.",
-        ],
-        booklet: null,
-      },
-    ],
-  },
-  {
-    id: "info",
-    navLabel: "Инфокиоски",
-    eyebrow: "Информационные платежные терминалы",
-    title: "Информационные киоски и терминалы.",
-    intro:
-      "Эта категория показана так же, как и остальные: один вертикальный экран, внутри которого пользователь двигается по моделям без смены паттерна взаимодействия.",
-    sectionBooklet: null,
-    slides: [
-      {
-        title: "SAGA S-19 LM",
-        subtitle: "Информационный терминал",
-        text: "Компактный информационный киоск для навигации, информирования и цифровых сервисных сценариев в общественных и корпоративных пространствах.",
-        image: withBase("/assets/info_kiosks/SAGA S-19 LM_info.jpg"),
-        bullets: [
-          "Подходит для навигации и информирования.",
-          "Компактный цифровой формат.",
-          "Лаконичная визуальная подача.",
-          "Хорошо встраивается в единую продуктовую систему.",
-        ],
-        details: [
-          "Такую категорию удобно развивать дальше, добавляя новые конфигурации без полной переделки страницы.",
-          "Сейчас она уже встроена в общий UX-каркас каталога и готова к расширению.",
-        ],
-        booklet: null,
-      },
-    ],
-  },
-  {
-    id: "charging",
-    navLabel: "Зарядные станции",
-    eyebrow: "Зарядные станции",
-    title: "Зарядные станции для электромобилей.",
-    intro:
-      "Категория добавлена в ту же продуктовую архитектуру, чтобы сайт показывал не набор разрозненных карточек, а цельную платформу решений.",
-    sectionBooklet: null,
-    slides: [
-      {
-        title: "SE180",
-        subtitle: "Зарядная станция",
-        text: "Решение для зарядной инфраструктуры с акцентом на современную промышленную подачу и понятное позиционирование в единой линейке продуктов.",
-        image: withBase("/assets/charging_stations/se180_front.jpg"),
-        bullets: [
-          "Отдельное направление продуктовой линейки.",
-          "Современный индустриальный образ.",
-          "Подходит для расширения сайта за пределы банковского оборудования.",
-          "Логично встраивается в единую витрину решений.",
-        ],
-        details: [
-          "Эта карточка помогает показать, что сайт может масштабироваться на новые направления без изменения основного UX.",
-          "При добавлении новых станций они просто появятся горизонтально рядом с текущей моделью.",
-        ],
-        booklet: null,
-      },
-    ],
-  },
-];
-
 const sections = [
   { id: "hero", label: "Главный экран" },
   ...deviceSections.map((section) => ({ id: section.id, label: section.navLabel })),
@@ -450,6 +64,12 @@ const sections = [
   { id: "company", label: "Компания" },
   { id: "contacts", label: "Контакты" },
 ];
+
+const sectionsWithProducts: (typeof deviceSections[number] & { products: Product[] })[] =
+  deviceSections.map((section) => ({
+    ...section,
+    products: getProductsByCategory(section.id),
+  }));
 ---
 
 <BaseLayout
@@ -536,7 +156,7 @@ const sections = [
       </div>
     </section>
 
-    {deviceSections.map((category, categoryIndex) => (
+    {sectionsWithProducts.map((category, categoryIndex) => (
       <section class="screen panel-screen product-screen" id={category.id} data-section>
         <div class="container product-screen-inner">
           <div class={`product-screen-head reveal reveal-delay-${Math.min((categoryIndex % 3) + 1, 3)}`}>
@@ -545,7 +165,7 @@ const sections = [
             <p>{category.intro}</p>
 
             <div class="product-screen-meta">
-              <span class="product-chip">{category.slides.length} моделей в разделе</span>
+              <span class="product-chip">{category.products.length} моделей в разделе</span>
               <span class="product-chip">Вертикальный переход между категориями</span>
               <span class="product-chip">Горизонтальный свайп внутри линейки</span>
               {category.sectionBooklet && (
@@ -588,7 +208,11 @@ const sections = [
             </div>
           ) : null}
 
-          <div class="carousel-shell reveal reveal-delay-3" data-carousel-wrap data-count={category.slides.length}>
+          <div
+            class="carousel-shell reveal reveal-delay-3"
+            data-carousel-wrap
+            data-count={category.products.length}
+          >
             <div class="carousel-topbar">
               <div class="carousel-meta">
                 <span class="product-chip">Свайп влево/вправо для переключения</span>
@@ -611,20 +235,38 @@ const sections = [
               tabindex="0"
               aria-label={`Модели категории ${category.navLabel}`}
             >
-              {category.slides.map((slide) => (
-                <article class="device-card" data-slide>
-                  <div class="device-card-media">
-                    <img src={slide.image} alt={slide.title} loading="lazy" />
-                    <div class="device-card-badge">{slide.subtitle}</div>
-                  </div>
+              {category.products.map((product) => {
+                const primaryImage =
+                  product.images.find((img) => img.isPrimary) ?? product.images[0];
+
+                return (
+                  <article class="device-card" data-slide>
+                    <div class="device-card-media">
+                      {primaryImage && (
+                        primaryImage.optimized ? (
+                          <Image
+                            src={primaryImage.optimized}
+                            alt={primaryImage.alt || product.title}
+                            loading="lazy"
+                          />
+                        ) : (
+                          <img
+                            src={withBase(primaryImage.src)}
+                            alt={primaryImage.alt || product.title}
+                            loading="lazy"
+                          />
+                        )
+                      )}
+                      <div class="device-card-badge">{product.subtitle}</div>
+                    </div>
 
                   <div class="device-card-body">
                     <div class="device-card-kicker">{category.eyebrow}</div>
-                    <h3>{slide.title}</h3>
-                    <p>{slide.text}</p>
+                    <h3>{product.title}</h3>
+                    <p>{product.intro}</p>
 
                     <ul>
-                      {slide.bullets.map((bullet) => (
+                      {product.bullets.map((bullet) => (
                         <li>{bullet}</li>
                       ))}
                     </ul>
@@ -633,17 +275,17 @@ const sections = [
                       <details class="device-details">
                         <summary>Подробнее</summary>
                         <div class="device-details-body">
-                          {slide.details.map((item) => (
+                          {product.details.map((item) => (
                             <p>{item}</p>
                           ))}
                         </div>
                       </details>
 
                       <div class="device-action-row">
-                        {slide.booklet && (
+                        {(product.sectionBooklet ?? category.sectionBooklet) && (
                           <a
                             class="btn btn-ghost"
-                            href={slide.booklet}
+                            href={product.sectionBooklet ?? category.sectionBooklet}
                             target="_blank"
                             rel="noopener"
                           >
@@ -655,23 +297,24 @@ const sections = [
                     </div>
                   </div>
                 </article>
-              ))}
+              );
+              })}
             </div>
 
             <div class="carousel-nav" aria-label="Навигация по слайдам">
               <div class="carousel-dots">
-                {category.slides.map((slide, index) => (
+                {category.products.map((product, index) => (
                   <button
                     type="button"
                     class={`carousel-dot ${index === 0 ? "is-active" : ""}`}
                     data-carousel-dot={index}
-                    aria-label={slide.title}
+                    aria-label={product.title}
                   ></button>
                 ))}
               </div>
 
               <span class="carousel-count" data-carousel-count>
-                1 / {category.slides.length}
+                1 / {category.products.length}
               </span>
             </div>
           </div>
@@ -805,17 +448,16 @@ const sections = [
           <div class="contact-group">
             <div class="contact-kicker">Почта</div>
             <a href="mailto:info@saga-tech.ru" class="contact-link">info@saga-tech.ru</a>
+            <div class="contact-kicker">Для прессы</div>
             <a href="mailto:press@sagacorporation.com" class="contact-link">
               press@sagacorporation.com
             </a>
           </div>
 
           <div class="contact-group">
-            <div class="contact-kicker">Адреса</div>
-            <div class="contact-text">Москва, ул. Бутырская, д. 62, 21 этаж</div>
-            <div class="contact-text">Москва, ул. Верейская, д. 42, стр. 5</div>
-            <div class="contact-text">Московская область, Дубна, пр-т Науки, д. 96</div>
-            <div class="contact-text">Москва, 8 Марта, д. 2, стр. 8</div>
+            <div class="contact-kicker">Адрес</div>
+            <div class="contact-text">111622, г. Москва, ул. Большая Косинская, д. 27, строение 16, эт. 5, помещение 508А</div>
+            <div class="contact-text">Москва, ул. Уральская, д. 21</div>
           </div>
 
           <div class="contact-icons">
@@ -994,6 +636,18 @@ const sections = [
           if (window.innerWidth <= 860) return;
           if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
           if (carousel.scrollWidth <= carousel.clientWidth) return;
+
+          const atStart = carousel.scrollLeft <= 0;
+          const atEnd =
+            Math.ceil(carousel.scrollLeft + carousel.clientWidth) >=
+            carousel.scrollWidth;
+
+          // На десктопе: пока есть куда листать карусель — прокручиваем её горизонтально.
+          // Когда дошли до первого/последнего слайда и пользователь продолжает скроллить,
+          // отдаём событие странице, чтобы она прокручивалась дальше вертикально.
+          if ((atStart && e.deltaY < 0) || (atEnd && e.deltaY > 0)) {
+            return;
+          }
 
           e.preventDefault();
           carousel.scrollBy({ left: e.deltaY, behavior: "auto" });
