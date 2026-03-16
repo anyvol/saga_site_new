@@ -135,7 +135,7 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
       <div class="hero-overlay"></div>
 
       <div class="container hero-content">
-        <div class="eyebrow reveal">SAGA TECHNOLOGIES</div>
+        <div class="eyebrow reveal">САГА Технологии</div>
 
         <h1 class="hero-title reveal reveal-delay-1">
           Платформа
@@ -213,21 +213,12 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
             data-carousel-wrap
             data-count={category.products.length}
           >
-            <div class="carousel-topbar">
-              <div class="carousel-meta">
-                <span class="product-chip">Свайп влево/вправо для переключения</span>
-                <span class="product-chip">Карточки с раскрывающимися подробностями</span>
-              </div>
-
-              <div class="carousel-controls">
-                <button type="button" class="carousel-btn" data-carousel-prev aria-label="Предыдущая модель">
-                  <span>←</span>
-                </button>
-                <button type="button" class="carousel-btn" data-carousel-next aria-label="Следующая модель">
-                  <span>→</span>
-                </button>
-              </div>
+          <div class="carousel-topbar">
+            <div class="carousel-meta">
+              <span class="product-chip">Свайп влево/вправо для переключения</span>
+              <span class="product-chip">Карточки с раскрывающимися подробностями</span>
             </div>
+          </div>
 
             <div
               class="product-carousel"
@@ -299,6 +290,25 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
                 </article>
               );
               })}
+            </div>
+
+            <div class="carousel-controls">
+              <button
+                type="button"
+                class="carousel-btn"
+                data-carousel-prev
+                aria-label="Предыдущая модель"
+              >
+                <span>←</span>
+              </button>
+              <button
+                type="button"
+                class="carousel-btn"
+                data-carousel-next
+                aria-label="Следующая модель"
+              >
+                <span>→</span>
+              </button>
             </div>
 
             <div class="carousel-nav" aria-label="Навигация по слайдам">
@@ -378,13 +388,7 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
         </div>
 
         <div class="company-media-grid">
-          <div class="company-visual reveal reveal-delay-1">
-            <img
-              src={withBase("/assets/atms/saga_atm_32_front.jpg")}
-              alt="Флагманский банкомат SAGA"
-              loading="lazy"
-            />
-          </div>
+
 
           <article class="company-media-card reveal reveal-delay-2">
             <video
@@ -593,8 +597,14 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
         });
       };
 
+      let hasPeeked = false;
+
       const render = () => {
         const activeIndex = getActiveIndex();
+
+        slides.forEach((slide, index) => {
+          slide.classList.toggle("is-active", index === activeIndex);
+        });
 
         dots.forEach((dot, index) => {
           dot.classList.toggle("is-active", index === activeIndex);
@@ -606,6 +616,12 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
 
         if (prev) prev.disabled = activeIndex === 0;
         if (next) next.disabled = activeIndex === slides.length - 1;
+
+        // как только пользователь начал листать дальше первой карты на мобиле —
+        // больше не показываем "подсказку свайпа"
+        if (window.innerWidth <= 860 && hasPeeked && slides[0]) {
+          slides[0].classList.remove("device-card--peek");
+        }
       };
 
       prev?.addEventListener("click", () => {
@@ -634,7 +650,8 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
         "wheel",
         (e) => {
           if (window.innerWidth <= 860) return;
-          if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+          // Реагируем только на жесты, где горизонтальная компонента сильнее вертикальной
+          if (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) return;
           if (carousel.scrollWidth <= carousel.clientWidth) return;
 
           const atStart = carousel.scrollLeft <= 0;
@@ -657,6 +674,38 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
 
       window.addEventListener("resize", render);
       render();
+      // начальное состояние: первая карточка активна
+      slides[0]?.classList.add("is-active");
+
+      // На мобильных: однократная "подсказка свайпа", когда пользователь
+      // реально доскроллил до этой категории.
+      if (window.innerWidth <= 860 && !prefersReducedMotion.matches) {
+        const section = wrap.closest("[data-section]");
+        if (section && slides[0]) {
+          const peekObserver = new IntersectionObserver(
+            (entries, observer) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  const first = slides[0];
+                  if (first) {
+                    first.classList.add("device-card--peek");
+                    // снимаем класс после первого прогона анимации, чтобы
+                    // дальнейшие свайпы её не перезапускали
+                    setTimeout(() => {
+                      first.classList.remove("device-card--peek");
+                      hasPeeked = true;
+                    }, 800);
+                  }
+                  observer.disconnect();
+                }
+              });
+            },
+            { threshold: 0.35 }
+          );
+
+          peekObserver.observe(section);
+        }
+      }
     };
 
     carouselWraps.forEach(setupCarousel);
