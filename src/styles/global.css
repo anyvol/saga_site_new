@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;500;600;700&display=swap");
+
 :root {
   --bg: #f3f4f6;
   --surface: rgba(255, 255, 255, 0.72);
@@ -36,7 +38,8 @@ body {
 }
 
 body {
-  font-family: "Myriad Pro", "Myriad", Calibri, "Trebuchet MS", sans-serif;
+  font-family: "Fira Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
   overflow: hidden;
 }
 
@@ -85,8 +88,9 @@ body {
 
 img,
 video {
-  max-width: auto;
+  max-width: 100%;
   display: block;
+  margin-inline: auto;
 }
 
 a {
@@ -289,7 +293,7 @@ select {
 h2,
 h3 {
   margin: 0;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.02em;
 }
 
 .hero-title {
@@ -394,6 +398,7 @@ h3 {
   font-size: clamp(34px, 5vw, 64px);
   line-height: 0.98;
   margin-bottom: 16px;
+  color: rgba(15, 17, 21, 0.9);
 }
 
 .section-copy p,
@@ -459,6 +464,7 @@ h3 {
 .product-body h3 {
   font-size: 24px;
   margin-bottom: 10px;
+  color: rgba(15, 17, 21, 0.9);
 }
 
 .product-body ul {
@@ -497,6 +503,11 @@ h3 {
 .trust-card {
   padding: 22px;
   border-radius: var(--radius-lg);
+  display: grid;
+  gap: 8px;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
 }
 
 .trust-value {
@@ -578,6 +589,7 @@ h3 {
   font-size: clamp(24px, 3vw, 34px);
   line-height: 1.05;
   letter-spacing: -0.04em;
+  color: rgba(15, 17, 21, 0.9);
 }
 
 /* company */
@@ -593,6 +605,7 @@ h3 {
   font-size: clamp(36px, 5vw, 66px);
   line-height: 0.98;
   margin-bottom: 16px;
+  color: rgba(15, 17, 21, 0.9);
 }
 
 .company-copy p {
@@ -630,13 +643,13 @@ h3 {
 .contact-layout {
   display: grid;
   gap: 30px;
-  align-items: start;
+  align-items: center;
 }
 
 .contact-screen {
-  align-items: start;
-  padding-top: calc(var(--header-h) - 56px);
-  padding-bottom: 16px;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
 }
 
 .contact-card {
@@ -645,6 +658,7 @@ h3 {
   padding: 28px;
   display: grid;
   gap: 22px;
+  margin-inline: auto;
 }
 
 .contact-group {
@@ -841,7 +855,7 @@ h3 {
 .company-media-card video {
   position: absolute;
   inset: 0;
-  width: auto;
+  width: 100%;
   height: 100%;
   object-fit: cover;
 }
