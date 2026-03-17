@@ -248,7 +248,6 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
                           />
                         )
                       )}
-                      <div class="device-card-badge">{product.subtitle}</div>
                     </div>
 
                   <div class="device-card-body">
@@ -256,16 +255,15 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
                     <h3>{product.title}</h3>
                     <p>{product.intro}</p>
 
-                    <ul>
-                      {product.bullets.map((bullet) => (
-                        <li>{bullet}</li>
-                      ))}
-                    </ul>
-
                     <div class="device-card-actions">
                       <details class="device-details">
-                        <summary>Подробнее</summary>
+                        <summary aria-label="Подробнее"></summary>
                         <div class="device-details-body">
+                          <ul class="device-details-list">
+                            {product.bullets.map((bullet) => (
+                              <li>{bullet}</li>
+                            ))}
+                          </ul>
                           {product.details.map((item) => (
                             <p>{item}</p>
                           ))}
@@ -275,14 +273,18 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
                       <div class="device-action-row">
                         {(product.sectionBooklet ?? category.sectionBooklet) && (
                           <a
-                            class="btn btn-ghost"
+                            class="btn btn-ghost btn-pdf"
                             href={product.sectionBooklet ?? category.sectionBooklet}
                             target="_blank"
                             rel="noopener"
                           >
-                            Скачать PDF
+                            <svg class="btn-pdf-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                              <path fill="currentColor" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2 5 5h-5V4zM8 13h2.5a1.5 1.5 0 0 1 0 3H8v-3zm4 0h2v2h-2v-2zm0-2a2 2 0 0 1 2-2h1v-2h-4v4h1z"/>
+                            </svg>
+                            Скачать
                           </a>
                         )}
+                        <a class="btn btn-ghost" href="#" aria-disabled="true">Страница продукта</a>
                         <a class="btn btn-primary" href="#contacts">Обсудить проект</a>
                       </div>
                     </div>
@@ -435,11 +437,6 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
       <div class="container contact-layout">
         <div class="section-copy reveal">
           <div class="eyebrow">Контакты</div>
-          <h2>Быстрый выход на контакт без перегруза.</h2>
-          <p>
-            Финальный экран завершает просмотр каталога и даёт понятные действия:
-            позвонить, написать или перейти в основные каналы коммуникации.
-          </p>
         </div>
 
         <div class="contact-card reveal reveal-delay-1">
@@ -482,10 +479,10 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
     </section>
   </main>
 
-  <footer class="site-footer">
+  <footer class="site-footer" id="site-footer" data-footer>
     <div class="container site-footer-inner">
       <span class="site-footer-left">АО «САГА Технологии», 2026</span>
-      <span class="site-footer-right">Версия сайта: 0.1</span>
+      <span class="site-footer-right">Версия сайта: 0.11</span>
     </div>
   </footer>
 
@@ -541,6 +538,29 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
 
     sectionNodes.forEach((section) => sectionObserver.observe(section));
 
+    // Десктоп: футер только когда доскроллил до конца (контакты)
+    const footer = document.getElementById("site-footer");
+    const contactsSection = document.getElementById("contacts");
+    if (footer && contactsSection) {
+      const updateFooterVisibility = (isIntersecting) => {
+        if (window.innerWidth <= 860) footer.classList.add("is-visible");
+        else footer.classList.toggle("is-visible", isIntersecting);
+      };
+      const footerObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => updateFooterVisibility(entry.isIntersecting));
+        },
+        { threshold: 0.2, rootMargin: "0px 0px -20% 0px" }
+      );
+      footerObserver.observe(contactsSection);
+      if (window.innerWidth <= 860) footer.classList.add("is-visible");
+      window.addEventListener("resize", () => {
+        footerObserver.disconnect();
+        footerObserver.observe(contactsSection);
+        updateFooterVisibility(contactsSection.getBoundingClientRect().top < window.innerHeight * 0.8);
+      });
+    }
+
     const closeMenu = () => header?.classList.remove("is-open");
 
     if (menuToggle && header) {
@@ -579,18 +599,31 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
 
       if (!carousel || !slides.length) return;
 
+      const isDesktop = () => window.innerWidth > 860;
+
       const getActiveIndex = () => {
         let activeIndex = 0;
         let minDiff = Infinity;
 
-        slides.forEach((slide, index) => {
-          const diff = Math.abs(slide.offsetLeft - carousel.scrollLeft);
-          if (diff < minDiff) {
-            minDiff = diff;
-            activeIndex = index;
-          }
-        });
-
+        if (isDesktop()) {
+          const centerView = carousel.scrollLeft + carousel.clientWidth / 2;
+          slides.forEach((slide, index) => {
+            const slideCenter = slide.offsetLeft + slide.offsetWidth / 2;
+            const diff = Math.abs(slideCenter - centerView);
+            if (diff < minDiff) {
+              minDiff = diff;
+              activeIndex = index;
+            }
+          });
+        } else {
+          slides.forEach((slide, index) => {
+            const diff = Math.abs(slide.offsetLeft - carousel.scrollLeft);
+            if (diff < minDiff) {
+              minDiff = diff;
+              activeIndex = index;
+            }
+          });
+        }
         return activeIndex;
       };
 
@@ -598,8 +631,12 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
         const target = slides[Math.max(0, Math.min(index, slides.length - 1))];
         if (!target) return;
 
+        const scrollLeft = isDesktop()
+          ? Math.max(0, target.offsetLeft - (carousel.clientWidth - target.offsetWidth) / 2)
+          : target.offsetLeft;
+
         carousel.scrollTo({
-          left: target.offsetLeft,
+          left: scrollLeft,
           behavior: prefersReducedMotion.matches ? "auto" : "smooth",
         });
       };
@@ -644,21 +681,41 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
       });
 
       let rafId = null;
+      let wheelLocked = false;
+      let scrollEndTimer = null;
+      const resetScrollEndTimer = () => {
+        if (!wheelLocked) return;
+        if (scrollEndTimer) clearTimeout(scrollEndTimer);
+        scrollEndTimer = setTimeout(() => {
+          wheelLocked = false;
+          scrollEndTimer = null;
+        }, 500);
+      };
       carousel.addEventListener(
         "scroll",
         () => {
           if (rafId) cancelAnimationFrame(rafId);
           rafId = requestAnimationFrame(render);
+          resetScrollEndTimer();
         },
         { passive: true }
       );
 
+      // Десктоп: один свайп = одна карточка (как на мобиле)
+      // Блокируем до полной остановки прокрутки + минимальный интервал 1.2с
+      let lastGoToTime = 0;
+      const setScrollEndLock = () => {
+        wheelLocked = true;
+        resetScrollEndTimer();
+      };
       carousel.addEventListener(
         "wheel",
         (e) => {
           if (window.innerWidth <= 860) return;
-          // Реагируем только на жесты, где горизонтальная компонента сильнее вертикальной
-          if (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) return;
+          if (!wrap.contains(e.target)) return;
+          if (Math.abs(e.deltaX) < Math.abs(e.deltaY)) return;
+          const deltaH = e.deltaX;
+          if (deltaH === 0) return;
           if (carousel.scrollWidth <= carousel.clientWidth) return;
 
           const atStart = carousel.scrollLeft <= 0;
@@ -666,17 +723,21 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
             Math.ceil(carousel.scrollLeft + carousel.clientWidth) >=
             carousel.scrollWidth;
 
-          // На десктопе: пока есть куда листать карусель — прокручиваем её горизонтально.
-          // Когда дошли до первого/последнего слайда и пользователь продолжает скроллить,
-          // отдаём событие странице, чтобы она прокручивалась дальше вертикально.
-          if ((atStart && e.deltaY < 0) || (atEnd && e.deltaY > 0)) {
-            return;
-          }
+          if ((atStart && deltaH < 0) || (atEnd && deltaH > 0)) return;
 
           e.preventDefault();
-          carousel.scrollBy({ left: e.deltaY, behavior: "auto" });
+          e.stopPropagation();
+          if (wheelLocked) return;
+          if (Date.now() - lastGoToTime < 500) return;
+          const idx = getActiveIndex();
+          const nextIdx = deltaH > 0 ? idx + 1 : idx - 1;
+          if (nextIdx >= 0 && nextIdx < slides.length) {
+            goTo(nextIdx);
+            lastGoToTime = Date.now();
+            setScrollEndLock();
+          }
         },
-        { passive: false }
+        { passive: false, capture: true }
       );
 
       window.addEventListener("resize", render);
