@@ -969,11 +969,11 @@ h3 {
 }
 
 .carousel-btn[data-carousel-prev] {
-  left: -30px;
+  left: 12px;
 }
 
 .carousel-btn[data-carousel-next] {
-  right: -30px;
+  right: 12px;
 }
 
 /* Десктоп: фото сверху, текст снизу (как на мобиле); карточка растёт при раскрытии */
@@ -991,7 +991,6 @@ h3 {
   .device-card {
     max-height: none;
     overflow: visible;
-    scroll-snap-align: center;
   }
 
   .device-card:not(.is-active) {
@@ -1013,7 +1012,7 @@ h3 {
   gap: 18px;
   overflow-x: auto;
   overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
+  scroll-snap-type: none;
   scroll-padding-inline: 4px;
   padding: 0px 0px 0px;
   border-radius: var(--radius-xl);
@@ -1026,7 +1025,6 @@ h3 {
 }
 
 .device-card {
-  scroll-snap-align: start;
   min-height: 100%;
   display: grid;
   grid-template-rows: auto 1fr;
@@ -1376,6 +1374,7 @@ h3 {
     grid-auto-columns: 100%;
     gap: 16px;
     scroll-padding-inline: 0;
+    scroll-snap-type: x mandatory;
   }
 
   /* Мобильная: фото крупнее (как раньше), сверху, текст снизу */

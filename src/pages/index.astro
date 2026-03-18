@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { deviceSections } from "../data/categories";
 import { getProductsByCategory, type Product } from "../data/products";
 import { Image } from "astro:assets";
+import ProductCarouselIsland from "../components/ProductCarouselIsland.jsx";
 
 const base = import.meta.env.BASE_URL;
 const withBase = (path: string) =>
@@ -211,6 +212,7 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
           <div
             class="carousel-shell reveal reveal-delay-3"
             data-carousel-wrap
+            data-section-id={category.id}
             data-count={category.products.length}
           >
           <div class="carousel-topbar">
@@ -284,7 +286,7 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
                             Скачать
                           </a>
                         )}
-                        <a class="btn btn-ghost" href="#" aria-disabled="true">Страница продукта</a>
+                        <button class="btn btn-ghost" type="button" disabled>Страница продукта</button>
                         <a class="btn btn-primary" href="#contacts">Обсудить проект</a>
                       </div>
                     </div>
@@ -329,6 +331,7 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
                 1 / {category.products.length}
               </span>
             </div>
+            <ProductCarouselIsland client:load sectionId={category.id} />
           </div>
         </div>
       </section>
@@ -482,7 +485,7 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
   <footer class="site-footer" id="site-footer" data-footer>
     <div class="container site-footer-inner">
       <span class="site-footer-left">АО «САГА Технологии», 2026</span>
-      <span class="site-footer-right">Версия сайта: 0.12</span>
+      <span class="site-footer-right">Версия сайта: 0.13</span>
     </div>
   </footer>
 
@@ -586,197 +589,6 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
         });
       });
     });
-
-    const carouselWraps = Array.from(document.querySelectorAll("[data-carousel-wrap]"));
-
-    const setupCarousel = (wrap) => {
-      const carousel = wrap.querySelector("[data-carousel]");
-      const slides = Array.from(wrap.querySelectorAll("[data-slide]"));
-      const prev = wrap.querySelector("[data-carousel-prev]");
-      const next = wrap.querySelector("[data-carousel-next]");
-      const dots = Array.from(wrap.querySelectorAll("[data-carousel-dot]"));
-      const count = wrap.querySelector("[data-carousel-count]");
-
-      if (!carousel || !slides.length) return;
-
-      const isDesktop = () => window.innerWidth > 860;
-
-      const getActiveIndex = () => {
-        let activeIndex = 0;
-        let minDiff = Infinity;
-
-        if (isDesktop()) {
-          const centerView = carousel.scrollLeft + carousel.clientWidth / 2;
-          slides.forEach((slide, index) => {
-            const slideCenter = slide.offsetLeft + slide.offsetWidth / 2;
-            const diff = Math.abs(slideCenter - centerView);
-            if (diff < minDiff) {
-              minDiff = diff;
-              activeIndex = index;
-            }
-          });
-        } else {
-          slides.forEach((slide, index) => {
-            const diff = Math.abs(slide.offsetLeft - carousel.scrollLeft);
-            if (diff < minDiff) {
-              minDiff = diff;
-              activeIndex = index;
-            }
-          });
-        }
-        return activeIndex;
-      };
-
-      const goTo = (index) => {
-        const target = slides[Math.max(0, Math.min(index, slides.length - 1))];
-        if (!target) return;
-
-        const scrollLeft = isDesktop()
-          ? Math.max(0, target.offsetLeft - (carousel.clientWidth - target.offsetWidth) / 2)
-          : target.offsetLeft;
-
-        carousel.scrollTo({
-          left: scrollLeft,
-          behavior: prefersReducedMotion.matches ? "auto" : "smooth",
-        });
-      };
-
-      let hasPeeked = false;
-
-      const render = () => {
-        const activeIndex = getActiveIndex();
-
-        slides.forEach((slide, index) => {
-          slide.classList.toggle("is-active", index === activeIndex);
-        });
-
-        dots.forEach((dot, index) => {
-          dot.classList.toggle("is-active", index === activeIndex);
-        });
-
-        if (count) {
-          count.textContent = `${activeIndex + 1} / ${slides.length}`;
-        }
-
-        if (prev) prev.disabled = activeIndex === 0;
-        if (next) next.disabled = activeIndex === slides.length - 1;
-
-        // как только пользователь начал листать дальше первой карты на мобиле —
-        // больше не показываем "подсказку свайпа"
-        if (window.innerWidth <= 860 && hasPeeked && slides[0]) {
-          slides[0].classList.remove("device-card--peek");
-        }
-      };
-
-      prev?.addEventListener("click", () => {
-        goTo(getActiveIndex() - 1);
-      });
-
-      next?.addEventListener("click", () => {
-        goTo(getActiveIndex() + 1);
-      });
-
-      dots.forEach((dot, index) => {
-        dot.addEventListener("click", () => goTo(index));
-      });
-
-      let rafId = null;
-      let wheelLocked = false;
-      let scrollEndTimer = null;
-      const resetScrollEndTimer = () => {
-        if (!wheelLocked) return;
-        if (scrollEndTimer) clearTimeout(scrollEndTimer);
-        scrollEndTimer = setTimeout(() => {
-          wheelLocked = false;
-          scrollEndTimer = null;
-        }, 500);
-      };
-      carousel.addEventListener(
-        "scroll",
-        () => {
-          if (rafId) cancelAnimationFrame(rafId);
-          rafId = requestAnimationFrame(render);
-          resetScrollEndTimer();
-        },
-        { passive: true }
-      );
-
-      // Десктоп: один свайп = одна карточка (как на мобиле)
-      // Блокируем до полной остановки прокрутки + минимальный интервал 1.2с
-      let lastGoToTime = 0;
-      const setScrollEndLock = () => {
-        wheelLocked = true;
-        resetScrollEndTimer();
-      };
-      carousel.addEventListener(
-        "wheel",
-        (e) => {
-          if (window.innerWidth <= 860) return;
-          if (!wrap.contains(e.target)) return;
-          if (Math.abs(e.deltaX) < Math.abs(e.deltaY)) return;
-          const deltaH = e.deltaX;
-          if (deltaH === 0) return;
-          if (carousel.scrollWidth <= carousel.clientWidth) return;
-
-          const atStart = carousel.scrollLeft <= 0;
-          const atEnd =
-            Math.ceil(carousel.scrollLeft + carousel.clientWidth) >=
-            carousel.scrollWidth;
-
-          if ((atStart && deltaH < 0) || (atEnd && deltaH > 0)) return;
-
-          e.preventDefault();
-          e.stopPropagation();
-          if (wheelLocked) return;
-          if (Date.now() - lastGoToTime < 500) return;
-          const idx = getActiveIndex();
-          const nextIdx = deltaH > 0 ? idx + 1 : idx - 1;
-          if (nextIdx >= 0 && nextIdx < slides.length) {
-            goTo(nextIdx);
-            lastGoToTime = Date.now();
-            setScrollEndLock();
-          }
-        },
-        { passive: false, capture: true }
-      );
-
-      window.addEventListener("resize", render);
-      render();
-      // начальное состояние: первая карточка активна
-      slides[0]?.classList.add("is-active");
-
-      // На мобильных: однократная "подсказка свайпа", когда пользователь
-      // реально доскроллил до этой категории.
-      if (window.innerWidth <= 860 && !prefersReducedMotion.matches) {
-        const section = wrap.closest("[data-section]");
-        if (section && slides[0]) {
-          const peekObserver = new IntersectionObserver(
-            (entries, observer) => {
-              entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                  const first = slides[0];
-                  if (first) {
-                    first.classList.add("device-card--peek");
-                    // снимаем класс после первого прогона анимации, чтобы
-                    // дальнейшие свайпы её не перезапускали
-                    setTimeout(() => {
-                      first.classList.remove("device-card--peek");
-                      hasPeeked = true;
-                    }, 800);
-                  }
-                  observer.disconnect();
-                }
-              });
-            },
-            { threshold: 0.35 }
-          );
-
-          peekObserver.observe(section);
-        }
-      }
-    };
-
-    carouselWraps.forEach(setupCarousel);
 
     if (prefersReducedMotion.matches) {
       document.querySelectorAll("video").forEach((video) => {
