@@ -4,6 +4,7 @@ import { deviceSections } from "../data/categories";
 import { getProductsByCategory, type Product } from "../data/products";
 import { Image } from "astro:assets";
 import ProductCarouselIsland from "../components/ProductCarouselIsland.jsx";
+import heroImage from "../assets/presentation/wine_saga_atm32.png";
 
 const base = import.meta.env.BASE_URL;
 const withBase = (path: string) =>
@@ -124,15 +125,11 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
 
   <main class="snap-shell" id="snap-shell">
     <section class="screen hero-screen" id="hero" data-section>
-      <video
+      <Image
+        src={heroImage}
+        alt="SAGA — устройства самообслуживания"
         class="hero-video"
-        src={withBase("/assets/promo_atm.mp4")}
-        autoplay
-        muted
-        loop
-        playsinline
-        preload="auto"
-      ></video>
+      />
       <div class="hero-overlay"></div>
 
       <div class="container hero-content">
