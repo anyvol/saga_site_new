@@ -1,0 +1,111 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const base = import.meta.env.BASE_URL;
+const withBase = (path: string) =>
+  `${base.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
+
+const headerNavItems = [
+  { label: "Продукты", href: "/" },
+  { label: "Компания", href: "/company" },
+  { label: "Контакты", href: "/contacts" },
+];
+---
+
+<BaseLayout
+  title="Компания — САГА Технологии"
+  description="АО «САГА Технологии» — производство и сервисная поддержка решений самообслуживания."
+>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/" aria-label="SAGA">
+        <img
+          src={withBase("/assets/logos/saga_logo_black.svg")}
+          alt="SAGA"
+          class="brand-logo"
+        />
+      </a>
+
+      <nav class="main-nav" aria-label="Навигация по сайту">
+        {headerNavItems.map((item) => (
+          <a href={item.href} class="nav-link">{item.label}</a>
+        ))}
+      </nav>
+
+      <a class="header-cta" href="/contacts">Связаться</a>
+    </div>
+  </header>
+
+  <main class="snap-shell">
+    <section class="screen panel-screen" id="company">
+      <div class="container company-layout">
+        <div class="company-copy reveal">
+          <div class="eyebrow">Компания</div>
+          <h1 class="hero-title">От идеи до производства и сервисной поддержки.</h1>
+          <p>
+            АО «САГА Технологии» основано в 2006 году. Сайт теперь показывает не
+            только отдельные продукты, но и целостный производственный контур —
+            от разработки до серийного выпуска.
+          </p>
+          <p>
+            Это создаёт правильный уровень доверия уже в первые минуты просмотра:
+            виден продукт, видна вариативность линейки и видно, что за ней стоит
+            реальное производство.
+          </p>
+
+          <div class="hero-actions">
+            <a href="/contacts" class="btn btn-primary">Связаться с нами</a>
+          </div>
+        </div>
+
+        <div class="company-media-grid">
+          <article class="company-media-card reveal reveal-delay-2">
+            <video
+              src={withBase("/assets/factory_saga_1.mp4")}
+              autoplay
+              muted
+              loop
+              playsinline
+              preload="metadata"
+            ></video>
+            <div class="feature-media-overlay">
+              <div class="feature-kicker">Производство</div>
+              <h3>Реальная производственная база</h3>
+              <p>
+                Видео с производства усиливает доверие к бренду и связывает
+                продуктовую витрину с реальным производственным контуром.
+              </p>
+            </div>
+          </article>
+
+          <article class="company-media-card reveal reveal-delay-3">
+            <video
+              src={withBase("/assets/factory_saga_2.mp4")}
+              autoplay
+              muted
+              loop
+              playsinline
+              preload="metadata"
+            ></video>
+            <div class="feature-media-overlay">
+              <div class="feature-kicker">Инженерия</div>
+              <h3>Системная разработка и выпуск</h3>
+              <p>
+                Такой блок помогает коллегам и партнёрам быстро считать масштаб,
+                зрелость и industrial feel компании.
+              </p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer is-visible" id="site-footer">
+    <div class="container site-footer-inner">
+      <span class="site-footer-left">АО «САГА Технологии», 2026</span>
+      <span class="site-footer-right">Версия сайта: 0.13</span>
+    </div>
+  </footer>
+</BaseLayout>
+

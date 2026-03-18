@@ -1,0 +1,205 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { deviceSections } from "../../data/categories";
+import { getProductsByCategory, loadAllProducts, type Product } from "../../data/products";
+import ImageLightboxIsland from "../../components/ImageLightboxIsland.jsx";
+import { Image } from "astro:assets";
+
+const base = import.meta.env.BASE_URL;
+const withBase = (path: string) =>
+  `${base.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
+
+const resolveBookletHref = (href?: string | null) => {
+  if (!href) return null;
+  // В JSON иногда хранится абсолютный путь к ассету без base.
+  if (href.startsWith("/assets/")) return withBase(href);
+  return href;
+};
+
+export async function getStaticPaths() {
+  const allProducts = loadAllProducts();
+  const categoryIds = Array.from(new Set(allProducts.map((p) => p.categoryId)));
+
+  return categoryIds.map((categoryId) => ({
+    params: { categoryId },
+  }));
+}
+
+const { categoryId } = Astro.params;
+const products = getProductsByCategory(String(categoryId));
+const section = deviceSections.find((s) => s.id === categoryId);
+
+const lineEyebrow = section?.eyebrow ?? "Линейка";
+const lineTitle = section?.title ?? String(categoryId);
+const lineIntro = section?.intro ?? "";
+
+const headerNavItems = [
+  { label: "Продукты", href: "/" },
+  { label: "Компания", href: "/company" },
+  { label: "Контакты", href: "/contacts" },
+];
+---
+
+<BaseLayout
+  title={`${lineTitle} — САГА Технологии`}
+  description={lineIntro}
+>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/" aria-label="SAGA">
+        <img
+          src={withBase("/assets/logos/saga_logo_black.svg")}
+          alt="SAGA"
+          class="brand-logo"
+        />
+      </a>
+
+      <nav class="main-nav" aria-label="Навигация по сайту">
+        {headerNavItems.map((item) => (
+          <a href={item.href} class="nav-link">{item.label}</a>
+        ))}
+      </nav>
+
+      <a class="header-cta" href="/contacts">Связаться</a>
+    </div>
+  </header>
+
+  <main class="snap-shell">
+    <section class="screen panel-screen line-screen-hero">
+      <div class="container">
+        <div class="line-hero-wrap">
+          <div class="line-hero-copy">
+            <div class="eyebrow">{lineEyebrow}</div>
+            <h1 class="hero-title line-hero-title">{lineTitle}</h1>
+            <p class="hero-text line-hero-text">{lineIntro}</p>
+
+            <div class="hero-actions" style="margin-top: 18px;">
+              <a href="/company" class="btn btn-secondary">
+                О компании
+              </a>
+            </div>
+          </div>
+
+          <div class="line-hero-bg" aria-hidden="true" />
+        </div>
+      </div>
+    </section>
+
+    <section class="screen panel-screen line-screen-products">
+      <div class="container">
+        <div class="products-grid" aria-label={`Продукты линейки: ${lineTitle}`}>
+          {products.map((product) => {
+            const startIndex = product.images.findIndex((img) => img.isPrimary);
+            const lightboxStartIndex = startIndex >= 0 ? startIndex : 0;
+            const lightboxSrcs = product.images.map((img) => withBase(img.src));
+            const lightboxAlts = product.images.map((img) => img.alt || product.title);
+            const bookletHref = resolveBookletHref(
+              product.sectionBooklet ?? section?.sectionBooklet
+            );
+
+            const primaryImage = product.images.find((img) => img.isPrimary) ?? product.images[0];
+            const primaryAlt = primaryImage?.alt || product.title;
+
+            return (
+              <article class="product-card">
+                <button
+                  type="button"
+                  class="product-media product-media-trigger"
+                  data-open-lightbox
+                  data-lightbox-srcs={JSON.stringify(lightboxSrcs)}
+                  data-lightbox-alts={JSON.stringify(lightboxAlts)}
+                  data-lightbox-start-index={lightboxStartIndex}
+                  aria-label={`Открыть изображения: ${product.title}`}
+                >
+                  {primaryImage?.optimized ? (
+                    <Image
+                      src={primaryImage.optimized}
+                      alt={primaryAlt}
+                      loading="lazy"
+                    />
+                  ) : (
+                    <img
+                      src={primaryImage ? withBase(primaryImage.src) : ""}
+                      alt={primaryAlt}
+                      loading="lazy"
+                    />
+                  )}
+                </button>
+
+                <div class="product-body">
+                  <h3>{product.title}</h3>
+                  <p>{product.intro}</p>
+
+                  {product.bullets?.length ? (
+                    <ul>
+                      {product.bullets.map((b) => (
+                        <li>{b}</li>
+                      ))}
+                    </ul>
+                  ) : null}
+
+                  {product.specs && Object.keys(product.specs).length ? (
+                    <div class="product-specs">
+                      <div class="product-specs-title">Техническая информация</div>
+                      <dl class="product-specs-dl">
+                        {Object.entries(product.specs).map(([key, value]) => (
+                          <div class="product-specs-row">
+                            <dt class="product-specs-key">{key}</dt>
+                            <dd class="product-specs-value">
+                              {Array.isArray(value) ? value.join(", ") : String(value)}
+                            </dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </div>
+                  ) : null}
+
+                  <div class="product-actions device-action-row">
+                    {bookletHref ? (
+                      <a
+                        class="btn btn-ghost btn-pdf"
+                        href={bookletHref}
+                        target="_blank"
+                        rel="noopener"
+                      >
+                        <svg class="btn-pdf-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                          <path fill="currentColor" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2 5 5h-5V4zM8 13h2.5a1.5 1.5 0 0 1 0 3H8v-3zm4 0h2v2h-2v-2zm0-2a2 2 0 0 1 2-2h1v-2h-4v4h1z"/>
+                        </svg>
+                        PDF
+                      </a>
+                    ) : null}
+
+                    <a
+                      class="btn btn-ghost btn-pdf"
+                      href="/contacts"
+                      aria-label="Перейти к контактам"
+                    >
+                      <img
+                        class="btn-phone-icon"
+                        src={withBase("/assets/logos/телефон-logo.png")}
+                        alt=""
+                        loading="lazy"
+                        width="18"
+                        height="18"
+                      />
+                    </a>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer-inner">
+      <span class="site-footer-left">АО «САГА Технологии», 2026</span>
+      <span class="site-footer-right">Версия сайта: 0.13</span>
+    </div>
+  </footer>
+
+  <ImageLightboxIsland client:load />
+</BaseLayout>
+

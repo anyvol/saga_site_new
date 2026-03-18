@@ -18,7 +18,7 @@
   "sectionBooklet": "/assets/booklets/qms_booklet.pdf",
   "images": [
     {
-      "src": "syo_19_vertical_saga_front.jpg",
+      "src": "syo_19_vertical_saga_front.png",
       "alt": "СУО 19″ — вертикальный терминал управления очередью",
       "kind": "front",
       "isPrimary": true

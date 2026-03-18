@@ -166,6 +166,24 @@ const parseIdsFromPath = (path: string): { categoryId?: string; productId?: stri
   return { categoryId, productId };
 };
 
+/**
+ * product.json иногда хранит sectionBooklet как:
+ * - null
+ * - "/assets/booklets/foo.pdf" (уже готовый абсолютный путь)
+ * - "foo.pdf" (нужно привести к "/assets/booklets/foo.pdf")
+ */
+const normalizeSectionBooklet = (href?: string | null): string | null | undefined => {
+  if (href === null) return null;
+  if (!href) return href;
+
+  // Уже абсолютный путь в assets (или web-путь).
+  if (href.startsWith("/assets/")) return href;
+  if (href.startsWith("/")) return href;
+  if (href.startsWith("http")) return href;
+
+  return href.endsWith(".pdf") ? `/assets/booklets/${href}` : href;
+};
+
 const normalizeProduct = (input: {
   json: Partial<ProductJson>;
   filePath: string;
@@ -241,7 +259,7 @@ const normalizeProduct = (input: {
     intro: json.intro,
     bullets,
     details,
-    sectionBooklet: json.sectionBooklet,
+    sectionBooklet: normalizeSectionBooklet(json.sectionBooklet),
     images,
     longDescription: json.longDescription,
     specs: json.specs,
