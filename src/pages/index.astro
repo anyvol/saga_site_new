@@ -10,6 +10,17 @@ import heroImage from "../assets/presentation/wine_saga_atm32.png";
 const base = import.meta.env.BASE_URL;
 const withBase = (path: string) =>
   `${base.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
+const resolveImageHref = (href?: string | null) => {
+  if (!href) return "";
+  if (/^(?:https?:)?\/\//.test(href) || href.startsWith("data:") || href.startsWith("blob:")) {
+    return href;
+  }
+  const normalizedBase = base.replace(/\/+$/, "");
+  if (normalizedBase && (href === normalizedBase || href.startsWith(`${normalizedBase}/`))) {
+    return href;
+  }
+  return href.startsWith("/") ? withBase(href) : withBase(`/${href}`);
+};
 
 const resolveBookletHref = (href?: string | null) => {
   if (!href) return null;
@@ -241,7 +252,7 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
                   return idx >= 0 ? idx : 0;
                 })();
                 // Только строковые URL: optimized — объект, JSON.stringify ломает лайтбокс
-                const lightboxSrcs = product.images.map((img) => withBase(img.src));
+                const lightboxSrcs = product.images.map((img) => resolveImageHref(img.src));
                 const lightboxAlts = product.images.map((img) => img.alt || product.title);
                 const bookletHref = resolveBookletHref(
                   product.sectionBooklet ?? category.sectionBooklet
@@ -267,7 +278,7 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
                           />
                         ) : (
                           <img
-                            src={withBase(primaryImage.src)}
+                            src={resolveImageHref(primaryImage.src)}
                             alt={primaryImage.alt || product.title}
                             loading="lazy"
                           />
@@ -527,7 +538,7 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
   <footer class="site-footer" id="site-footer" data-footer>
     <div class="container site-footer-inner">
       <span class="site-footer-left">АО «САГА Технологии», 2026</span>
-      <span class="site-footer-right">Версия сайта: 0.14</span>
+      <span class="site-footer-right">Версия сайта: 0.141</span>
     </div>
   </footer>
 

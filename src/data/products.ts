@@ -77,7 +77,7 @@ export interface Product {
   /**
    * Опциональная ссылка на PDF-буклет для категории/продукта.
    */
-  sectionBooklet?: string;
+  sectionBooklet?: string | null;
 
   /**
    * Галерея изображений продукта (несколько ракурсов, детали и т.п.).
@@ -113,7 +113,7 @@ type ProductJson = Omit<Product, "images"> & {
 const ASSETS_ROOT = "/assets/products";
 
 const productImageModules = import.meta.glob(
-  "../assets/products/**/*.{png,jpg,jpeg,webp,avif}",
+  "../assets/products/**/*.{png,jpg,jpeg,webp,avif,PNG,JPG,JPEG,WEBP,AVIF}",
   {
     eager: true,
   }
@@ -219,7 +219,7 @@ const normalizeProduct = (input: {
   const images: ProductImage[] = imagesSource.map((img) => {
     const rawSrc = img.src;
 
-    const src = resolveImageSrc({
+    let src = resolveImageSrc({
       rawSrc,
       categoryId,
       productId: id,
@@ -227,12 +227,14 @@ const normalizeProduct = (input: {
 
     let optimized: any;
 
-    // Если в JSON указан только файл без слэшей, пробуем найти его в src/assets/products
-    if (rawSrc && !rawSrc.startsWith("/")) {
+    // Пытаемся сопоставить с файлом в src/assets/products для любого формата rawSrc:
+    // и для "file.jpg", и для "/assets/products/.../file.jpg".
+    const fileName = rawSrc ? rawSrc.split("/").filter(Boolean).pop() : undefined;
+    if (fileName) {
       const key = buildAssetKey({
         categoryId,
         productId: id,
-        fileName: rawSrc,
+        fileName,
       });
 
       const mod = productImageModules[key];
@@ -240,6 +242,11 @@ const normalizeProduct = (input: {
       if (mod) {
         const candidate = (mod as any).default ?? mod;
         optimized = candidate;
+        // Для изображений из src/assets используем итоговый URL от сборщика,
+        // иначе путь вида /assets/products/... приведёт к 404.
+        if (candidate && typeof candidate.src === "string") {
+          src = candidate.src;
+        }
       }
     }
 
