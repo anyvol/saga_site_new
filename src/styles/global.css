@@ -287,20 +287,31 @@ select {
   width: auto;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: 64% center;
   transform: scale(0.8);
+  filter: saturate(0.72) contrast(0.84) brightness(1.08);
 }
 
 .hero-overlay {
   background:
-    radial-gradient(circle at 75% 30%, rgba(255, 255, 255, 0.85), transparent 40%),
-    linear-gradient(135deg, rgba(245, 247, 250, 0.9), rgba(230, 234, 240, 0.9));
+    linear-gradient(
+      102deg,
+      rgba(248, 250, 252, 0.94) 0%,
+      rgba(248, 250, 252, 0.9) 38%,
+      rgba(242, 245, 249, 0.76) 62%,
+      rgba(235, 240, 246, 0.56) 100%
+    ),
+    radial-gradient(circle at 82% 36%, rgba(255, 255, 255, 0.64), transparent 46%);
 }
 
 .hero-content {
   position: relative;
   z-index: 1;
   max-width: 920px;
+}
+
+.hero-screen .eyebrow {
+  color: rgba(66, 76, 92, 0.9);
 }
 
 .eyebrow {
@@ -338,6 +349,7 @@ h3 {
   font-size: clamp(42px, 8vw, 96px);
   line-height: 0.94;
   max-width: 10ch;
+  color: #2f3a4a;
 }
 
 .hero-text {
@@ -345,7 +357,7 @@ h3 {
   margin: 24px 0 0;
   font-size: clamp(16px, 2vw, 20px);
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.82);
+  color: rgba(65, 76, 94, 0.9);
 }
 
 .hero-actions {
@@ -355,6 +367,27 @@ h3 {
   justify-content: center;
   align-items: center;
   gap: 14px;
+}
+
+.hero-screen .btn-primary {
+  border: 1px solid rgba(111, 130, 157, 0.28);
+  box-shadow:
+    0 12px 28px rgba(32, 50, 73, 0.14),
+    0 1px 0 rgba(255, 255, 255, 0.6) inset;
+}
+
+.hero-screen .btn-secondary {
+  border: 1px solid rgba(96, 115, 141, 0.28);
+  background: rgba(255, 255, 255, 0.72);
+  color: #3d4b60;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.hero-screen .btn-secondary:hover {
+  border-color: rgba(83, 103, 132, 0.46);
+  background: rgba(255, 255, 255, 0.86);
+  color: #2f3a4e;
 }
 
 .btn {
@@ -1564,6 +1597,21 @@ h3 {
 
   .hero-screen {
     min-height: 100svh;
+  }
+
+  .hero-video {
+    object-position: 60% center;
+  }
+
+  .hero-overlay {
+    background:
+      linear-gradient(
+        120deg,
+        rgba(248, 250, 252, 0.96) 0%,
+        rgba(246, 249, 252, 0.92) 48%,
+        rgba(238, 243, 249, 0.78) 100%
+      ),
+      radial-gradient(circle at 78% 20%, rgba(255, 255, 255, 0.52), transparent 44%);
   }
 
   .products-grid,
