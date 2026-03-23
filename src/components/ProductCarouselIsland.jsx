@@ -99,7 +99,14 @@ export default function ProductCarouselIsland({ sectionId }) {
       const activeIndex = getActiveIndex();
 
       slides.forEach((slide, index) => {
-        slide.classList.toggle("is-active", index === activeIndex);
+        const isActive = index === activeIndex;
+        slide.classList.toggle("is-active", isActive);
+
+        if (!isActive) {
+          slide.querySelectorAll("details[open]").forEach((detailsEl) => {
+            detailsEl.removeAttribute("open");
+          });
+        }
       });
 
       dots.forEach((dot, index) => {

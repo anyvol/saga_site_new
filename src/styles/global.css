@@ -1143,7 +1143,7 @@ h3 {
   transform-origin: center;
   opacity: 0;
   transform: translateX(0) scale(0.96);
-  pointer-events: none;
+  pointer-events: auto;
   transition:
     opacity 0.5s ease,
     transform 0.5s ease;
@@ -1163,17 +1163,8 @@ h3 {
 }
 
 .device-card-body > * {
-  opacity: 0;
-  transform: translateY(8px);
-  transition:
-    opacity 0.45s ease,
-    transform 0.45s ease;
-  transition-delay: 0.12s;
-}
-
-.device-card.is-active .device-card-body > * {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
 }
 
 .lightbox-overlay {
