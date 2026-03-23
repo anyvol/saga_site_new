@@ -1,0 +1,15 @@
+---
+interface Props {
+  version?: string;
+  isVisible?: boolean;
+}
+
+const { version = "0.143", isVisible = false } = Astro.props;
+---
+
+<footer class:list={["site-footer", isVisible && "is-visible"]} id="site-footer" data-footer>
+  <div class="container site-footer-inner">
+    <span class="site-footer-left">АО «САГА Технологии», 2026</span>
+    <span class="site-footer-right">Версия сайта: {version}</span>
+  </div>
+</footer>

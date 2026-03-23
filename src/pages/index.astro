@@ -535,13 +535,6 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
     </section>
   </main>
 
-  <footer class="site-footer" id="site-footer" data-footer>
-    <div class="container site-footer-inner">
-      <span class="site-footer-left">АО «САГА Технологии», 2026</span>
-      <span class="site-footer-right">Версия сайта: 0.142</span>
-    </div>
-  </footer>
-
   <ImageLightboxIsland client:load />
 
   <script is:inline>
@@ -597,9 +590,11 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
     sectionNodes.forEach((section) => sectionObserver.observe(section));
 
     // Десктоп: футер только когда доскроллил до конца (контакты)
-    const footer = document.getElementById("site-footer");
-    const contactsSection = document.getElementById("contacts");
-    if (footer && contactsSection) {
+    const initFooterVisibility = () => {
+      const footer = document.getElementById("site-footer");
+      const contactsSection = document.getElementById("contacts");
+      if (!footer || !contactsSection) return;
+
       const updateFooterVisibility = (isIntersecting) => {
         if (window.innerWidth <= 860) footer.classList.add("is-visible");
         else footer.classList.toggle("is-visible", isIntersecting);
@@ -617,15 +612,28 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
         footerObserver.observe(contactsSection);
         updateFooterVisibility(contactsSection.getBoundingClientRect().top < window.innerHeight * 0.8);
       });
+    };
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initFooterVisibility, { once: true });
+    } else {
+      initFooterVisibility();
     }
 
     const closeMenu = () => header?.classList.remove("is-open");
+    const closeMenuOnMove = () => {
+      if (header?.classList.contains("is-open")) closeMenu();
+    };
 
     if (menuToggle && header) {
       menuToggle.addEventListener("click", () => {
         header.classList.toggle("is-open");
       });
     }
+
+    const snapShell = document.getElementById("snap-shell");
+    snapShell?.addEventListener("scroll", closeMenuOnMove, { passive: true });
+    window.addEventListener("scroll", closeMenuOnMove, { passive: true });
+    window.addEventListener("touchmove", closeMenuOnMove, { passive: true });
 
     [...mobileLinks, ...navLinks].forEach((link) => {
       link.addEventListener("click", (e) => {

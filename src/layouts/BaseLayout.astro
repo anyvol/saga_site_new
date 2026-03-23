@@ -1,14 +1,19 @@
 ---
 import "../styles/global.css";
+import SiteFooter from "../components/SiteFooter.astro";
 
 interface Props {
   title?: string;
   description?: string;
+  footerVisible?: boolean;
+  footerVersion?: string;
 }
 
 const {
   title = "SAGA — Российские решения самообслуживания",
-  description = "АО «САГА Технологии» — банкоматы, кассы самообслуживания и системы управления очередью."
+  description = "АО «САГА Технологии» — банкоматы, кассы самообслуживания и системы управления очередью.",
+  footerVisible = false,
+  footerVersion = "0.142"
 } = Astro.props;
 
 const favicon = `${import.meta.env.BASE_URL.replace(/\/+$/, "")}/assets/logos/saga_logo_black.svg`;
@@ -26,5 +31,6 @@ const favicon = `${import.meta.env.BASE_URL.replace(/\/+$/, "")}/assets/logos/sa
   </head>
   <body>
     <slot />
+    <SiteFooter isVisible={footerVisible} version={footerVersion} />
   </body>
 </html>
