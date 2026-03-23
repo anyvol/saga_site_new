@@ -16,6 +16,12 @@ export default function ImageLightboxIsland() {
   const [activeIndex, setActiveIndex] = useState(0);
   const closeBtnRef = useRef(null);
   const previouslyFocusedRef = useRef(null);
+  const stageRef = useRef(null);
+
+  const touchStartXRef = useRef(0);
+  const touchStartYRef = useRef(0);
+  const touchLastXRef = useRef(0);
+  const touchActiveRef = useRef(false);
 
   const imagesLength = imageSrcs.length;
   const canPrev = activeIndex > 0;
@@ -111,6 +117,56 @@ export default function ImageLightboxIsland() {
     };
   }, [close, canPrev, canNext, imagesLength, isOpen]);
 
+  const handleSwipeToPrev = useCallback(() => {
+    if (!canPrev) return;
+    setActiveIndex((v) => Math.max(0, v - 1));
+  }, [canPrev]);
+
+  const handleSwipeToNext = useCallback(() => {
+    if (!canNext) return;
+    setActiveIndex((v) => Math.min(imagesLength - 1, v + 1));
+  }, [canNext, imagesLength]);
+
+  const handleTouchStart = useCallback((e) => {
+    if (e.touches.length !== 1) return;
+    const t = e.touches[0];
+    touchStartXRef.current = t.clientX;
+    touchStartYRef.current = t.clientY;
+    touchLastXRef.current = t.clientX;
+    touchActiveRef.current = true;
+  }, []);
+
+  const handleTouchMove = useCallback((e) => {
+    if (!touchActiveRef.current || e.touches.length !== 1) return;
+    const t = e.touches[0];
+    const dx = t.clientX - touchStartXRef.current;
+    const dy = Math.abs(t.clientY - touchStartYRef.current);
+
+    // Если пользователь скроллит по вертикали — не считаем это свайпом.
+    if (dy > 80 && Math.abs(dx) < 40) {
+      touchActiveRef.current = false;
+      return;
+    }
+
+    touchLastXRef.current = t.clientX;
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (!touchActiveRef.current) return;
+    touchActiveRef.current = false;
+
+    const dx = touchLastXRef.current - touchStartXRef.current;
+    const threshold = 48;
+
+    if (Math.abs(dx) < threshold) return;
+
+    if (dx < 0) {
+      handleSwipeToNext();
+    } else {
+      handleSwipeToPrev();
+    }
+  }, [handleSwipeToNext, handleSwipeToPrev]);
+
   const activeSrc = useMemo(() => imageSrcs[activeIndex], [activeIndex, imageSrcs]);
   const activeAlt = useMemo(() => imageAlts[activeIndex] || "", [activeIndex, imageAlts]);
 
@@ -137,12 +193,18 @@ export default function ImageLightboxIsland() {
           <span aria-hidden="true">×</span>
         </button>
 
-        <div className="lightbox-stage">
+        <div
+          ref={stageRef}
+          className="lightbox-stage"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <button
             className="lightbox-nav"
             type="button"
             aria-label="Предыдущее изображение"
-            onClick={() => setActiveIndex((v) => Math.max(0, v - 1))}
+            onClick={handleSwipeToPrev}
             disabled={!canPrev}
             data-dir="prev"
           >
@@ -150,13 +212,18 @@ export default function ImageLightboxIsland() {
           </button>
 
           {/* eslint-disable-next-line jsx-a11y/alt-text */}
-          <img className="lightbox-image" src={activeSrc} alt={activeAlt} />
+          <img
+            className="lightbox-image"
+            src={activeSrc}
+            alt={activeAlt}
+            draggable={false}
+          />
 
           <button
             className="lightbox-nav"
             type="button"
             aria-label="Следующее изображение"
-            onClick={() => setActiveIndex((v) => Math.min(imagesLength - 1, v + 1))}
+            onClick={handleSwipeToNext}
             disabled={!canNext}
             data-dir="next"
           >

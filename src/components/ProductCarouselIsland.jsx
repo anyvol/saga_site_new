@@ -72,7 +72,12 @@ export default function ProductCarouselIsland({ sectionId }) {
         return;
       }
 
-      const duration = isDesktop() ? 360 : 420;
+      if (!isDesktop()) {
+        carousel.scrollLeft = targetLeft;
+        return;
+      }
+
+      const duration = 360;
       const startTime = performance.now();
 
       const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
@@ -89,8 +94,6 @@ export default function ProductCarouselIsland({ sectionId }) {
 
       requestAnimationFrame(step);
     };
-
-    let hasPeeked = false;
 
     const render = () => {
       const activeIndex = getActiveIndex();
@@ -110,9 +113,6 @@ export default function ProductCarouselIsland({ sectionId }) {
       if (prev) prev.disabled = activeIndex === 0;
       if (next) next.disabled = activeIndex === slides.length - 1;
 
-      if (window.innerWidth <= 860 && hasPeeked && slides[0]) {
-        slides[0].classList.remove("device-card--peek");
-      }
     };
 
     prev?.addEventListener("click", () => {
@@ -139,17 +139,26 @@ export default function ProductCarouselIsland({ sectionId }) {
       }, 500);
     };
     let snapTimer = null;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+    let touchActive = false;
+    let horizontalSwipe = false;
+    let touchStartIndex = 0;
 
     const onScroll = () => {
       if (rafId) cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(render);
 
-      // после ручного скролла / свайпа докручиваем к ближайшей карточке
-      if (snapTimer) clearTimeout(snapTimer);
-      snapTimer = setTimeout(() => {
-        const idx = getActiveIndex();
-        goTo(idx);
-      }, 140);
+      // На десктопе сохраняем доворот к ближайшей карточке.
+      if (isDesktop()) {
+        if (snapTimer) clearTimeout(snapTimer);
+        snapTimer = setTimeout(() => {
+          const idx = getActiveIndex();
+          goTo(idx);
+        }, 140);
+      }
 
       resetScrollEndTimer();
     };
@@ -192,37 +201,67 @@ export default function ProductCarouselIsland({ sectionId }) {
       capture: true,
     });
 
+    const onTouchStart = (e) => {
+      if (isDesktop()) return;
+      if (e.touches.length !== 1) return;
+      const t = e.touches[0];
+      touchStartX = t.clientX;
+      touchStartY = t.clientY;
+      touchEndX = t.clientX;
+      touchEndY = t.clientY;
+      touchStartIndex = getActiveIndex();
+      touchActive = true;
+      horizontalSwipe = false;
+    };
+
+    const onTouchMove = (e) => {
+      if (!touchActive || isDesktop()) return;
+      if (e.touches.length !== 1) return;
+      const t = e.touches[0];
+      touchEndX = t.clientX;
+      touchEndY = t.clientY;
+      const dx = touchEndX - touchStartX;
+      const dy = touchEndY - touchStartY;
+      if (Math.abs(dx) > Math.abs(dy)) {
+        horizontalSwipe = true;
+        e.preventDefault();
+      }
+    };
+
+    const onTouchEnd = () => {
+      if (!touchActive || isDesktop()) return;
+      touchActive = false;
+
+      const dx = touchEndX - touchStartX;
+      const dy = touchEndY - touchStartY;
+      const swipeThreshold = 6;
+      if (Math.abs(dx) < swipeThreshold || (!horizontalSwipe && Math.abs(dx) <= Math.abs(dy))) {
+        goTo(touchStartIndex);
+        return;
+      }
+
+      const direction = dx < 0 ? 1 : -1;
+      const targetIndex = Math.max(
+        0,
+        Math.min(slides.length - 1, touchStartIndex + direction),
+      );
+      goTo(targetIndex);
+    };
+    const onTouchCancel = () => {
+      if (!touchActive || isDesktop()) return;
+      touchActive = false;
+      goTo(touchStartIndex);
+    };
+    carousel.addEventListener("touchstart", onTouchStart, { passive: true });
+    carousel.addEventListener("touchmove", onTouchMove, { passive: false });
+    carousel.addEventListener("touchend", onTouchEnd, { passive: true });
+    carousel.addEventListener("touchcancel", onTouchCancel, { passive: true });
+
     const onResize = () => render();
     window.addEventListener("resize", onResize);
 
     render();
     slides[0]?.classList.add("is-active");
-
-    if (window.innerWidth <= 860 && !prefersReducedMotion.matches) {
-      const section = wrap.closest("[data-section]");
-      if (section && slides[0]) {
-        const peekObserver = new IntersectionObserver(
-          (entries, observer) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                const first = slides[0];
-                if (first) {
-                  first.classList.add("device-card--peek");
-                  setTimeout(() => {
-                    first.classList.remove("device-card--peek");
-                    hasPeeked = true;
-                  }, 800);
-                }
-                observer.disconnect();
-              }
-            });
-          },
-          { threshold: 0.35 },
-        );
-
-        peekObserver.observe(section);
-      }
-    }
 
     return () => {
       if (snapTimer) clearTimeout(snapTimer);
@@ -237,6 +276,10 @@ export default function ProductCarouselIsland({ sectionId }) {
       });
       carousel.removeEventListener("scroll", onScroll);
       carousel.removeEventListener("wheel", onWheel);
+      carousel.removeEventListener("touchstart", onTouchStart);
+      carousel.removeEventListener("touchmove", onTouchMove);
+      carousel.removeEventListener("touchend", onTouchEnd);
+      carousel.removeEventListener("touchcancel", onTouchCancel);
       window.removeEventListener("resize", onResize);
     };
   }, [sectionId]);
