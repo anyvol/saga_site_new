@@ -180,50 +180,7 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
             <div class="eyebrow">{category.eyebrow}</div>
             <h2>{category.title}</h2>
             <p>{category.intro}</p>
-
-            <div class="product-screen-meta">
-              <span class="product-chip">{category.products.length} моделей в разделе</span>
-              <span class="product-chip">Вертикальный переход между категориями</span>
-              <span class="product-chip">Горизонтальный свайп внутри линейки</span>
-              {category.sectionBooklet && (
-                <a
-                  class="product-chip product-chip-link"
-                  href={category.sectionBooklet}
-                  target="_blank"
-                  rel="noopener"
-                >
-                  Общий PDF
-                </a>
-              )}
-            </div>
           </div>
-
-          {category.features?.length ? (
-            <div class="feature-media-grid reveal reveal-delay-2">
-              {category.features.map((feature) => (
-                <article class="feature-media-card">
-                  {feature.type === "video" ? (
-                    <video
-                      src={feature.src}
-                      autoplay
-                      muted
-                      loop
-                      playsinline
-                      preload="metadata"
-                    ></video>
-                  ) : (
-                    <img src={feature.src} alt={feature.title} loading="lazy" />
-                  )}
-
-                  <div class="feature-media-overlay">
-                    <div class="feature-kicker">Подача продукта</div>
-                    <h3>{feature.title}</h3>
-                    <p>{feature.text}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-          ) : null}
 
           <div
             class="carousel-shell reveal reveal-delay-3"
@@ -231,13 +188,6 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
             data-section-id={category.id}
             data-count={category.products.length}
           >
-          <div class="carousel-topbar">
-            <div class="carousel-meta">
-              <span class="product-chip">Свайп влево/вправо для переключения</span>
-              <span class="product-chip">Карточки с раскрывающимися подробностями</span>
-            </div>
-          </div>
-
             <div
               class="product-carousel"
               data-carousel
@@ -372,10 +322,6 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
                   ></button>
                 ))}
               </div>
-
-              <span class="carousel-count" data-carousel-count>
-                1 / {category.products.length}
-              </span>
             </div>
 
             <div class="line-products-cta">
