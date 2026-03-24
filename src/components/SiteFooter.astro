@@ -5,11 +5,28 @@ interface Props {
 }
 
 const { version = "0.143", isVisible = false } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const withBase = (path: string) =>
+  `${base.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
+const links = [
+  { label: "Решения", href: "/solutions" },
+  { label: "Оборудование", href: "/equipment" },
+  { label: "Поддержка", href: "/support" },
+  { label: "Новости", href: "/news" },
+  { label: "Пресса", href: "/press" },
+  { label: "Карьера", href: "/careers" },
+  { label: "ИТ-деятельность", href: "/it-activity" },
+];
 ---
 
 <footer class:list={["site-footer", isVisible && "is-visible"]} id="site-footer" data-footer>
   <div class="container site-footer-inner">
     <span class="site-footer-left">АО «САГА Технологии», 2026</span>
+    <nav class="site-footer-links" aria-label="Разделы сайта">
+      {links.map((link) => (
+        <a href={withBase(link.href)} class="site-footer-link">{link.label}</a>
+      ))}
+    </nav>
     <span class="site-footer-right">Версия сайта: {version}</span>
   </div>
 </footer>

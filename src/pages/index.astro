@@ -31,8 +31,9 @@ const resolveBookletHref = (href?: string | null) => {
 
 const navItems = [
   { label: "Продукты", href: "#atm" },
-  { label: "Преимущества", href: "#advantages" },
-  { label: "Компания", href: "#company" },
+  { label: "Решения", href: withBase("/solutions") },
+  { label: "Оборудование", href: withBase("/equipment") },
+  { label: "Новости", href: withBase("/news") },
   { label: "Контакты", href: "#contacts" },
 ];
 
@@ -113,8 +114,6 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
         ))}
       </nav>
 
-      <a class="header-cta" href="#contacts">Связаться</a>
-
       <button class="menu-toggle" type="button" aria-label="Открыть меню">
         <span></span>
         <span></span>
@@ -167,8 +166,15 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
         </p>
 
         <div class="hero-actions reveal reveal-delay-3">
-          <a href="#atm" class="btn btn-primary">Открыть каталог</a>
-          <a href="#contacts" class="btn btn-secondary">Обсудить проект</a>
+          <a href={withBase("/company")} class="btn btn-secondary btn-hero" data-track-event="hero_about">
+            О компании
+          </a>
+          <a href="#contacts" class="btn btn-secondary btn-hero" data-track-event="hero_discuss_project">
+            Обсудить проект
+          </a>
+          <a href="#atm" class="btn btn-secondary btn-hero" data-track-event="hero_open_catalog">
+            Открыть каталог
+          </a>
         </div>
       </div>
     </section>
@@ -272,7 +278,7 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
                         )}
                         <a
                           class="btn btn-ghost btn-pdf"
-                          href="/contacts"
+                          href={withBase("/contacts")}
                           aria-label="Перейти к контактам"
                         >
                           <img
@@ -325,7 +331,7 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
             </div>
 
             <div class="line-products-cta">
-              <a class="btn btn-ghost" href={`/lines/${category.id}`}>
+              <a class="btn btn-ghost" href={withBase(`/lines/${category.id}`)} data-track-event="line_open_from_main">
                 О линейке продуктов
               </a>
             </div>

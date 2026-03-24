@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import InnerPageHeader from "../../components/InnerPageHeader.astro";
 import { deviceSections } from "../../data/categories";
 import { getProductsByCategory, loadAllProducts, type Product } from "../../data/products";
 import ImageLightboxIsland from "../../components/ImageLightboxIsland.jsx";
@@ -29,7 +30,12 @@ const resolveBookletHref = (href?: string | null) => {
 
 export async function getStaticPaths() {
   const allProducts = loadAllProducts();
-  const categoryIds = Array.from(new Set(allProducts.map((p) => p.categoryId)));
+  const categoryIds = Array.from(
+    new Set([
+      ...deviceSections.map((section) => section.id),
+      ...allProducts.map((p) => p.categoryId),
+    ])
+  );
 
   return categoryIds.map((categoryId) => ({
     params: { categoryId },
@@ -43,38 +49,148 @@ const section = deviceSections.find((s) => s.id === categoryId);
 const lineEyebrow = section?.eyebrow ?? "Линейка";
 const lineTitle = section?.title ?? String(categoryId);
 const lineIntro = section?.intro ?? "";
+const lineSeoDescription = `${lineTitle} — ${lineIntro || "Подбор конфигураций, характеристики и консультация по внедрению."}`;
 
-const headerNavItems = [
-  { label: "Продукты", href: "/" },
-  { label: "Компания", href: "/company" },
-  { label: "Контакты", href: "/contacts" },
-];
+const lineContentMap: Record<
+  string,
+  {
+    usp: string[];
+    scenarios: string[];
+    faq: { q: string; a: string }[];
+  }
+> = {
+  atm: {
+    usp: [
+      "Единый продуктовый язык SAGA для банковских и инфраструктурных сценариев.",
+      "Широкий выбор диагоналей для разных форматов отделений и зон 24/7.",
+      "Готовность к масштабированию пилота до сетевого внедрения.",
+    ],
+    scenarios: ["Банковские отделения", "Зоны 24/7", "Транспортные узлы"],
+    faq: [
+      {
+        q: "Можно ли подобрать конфигурацию под ограниченное пространство?",
+        a: "Да, линейка включает компактные варианты и флагманские модели для разных условий размещения.",
+      },
+      {
+        q: "Есть ли материалы для проектной презентации?",
+        a: "Да, для категории доступны карточки моделей, характеристики и PDF-материалы.",
+      },
+    ],
+  },
+  qms: {
+    usp: [
+      "Гибкие форм-факторы СУО для разных клиентских потоков.",
+      "Понятный UX-паттерн выбора устройств внутри одной категории.",
+      "Современная визуальная подача для сервисных пространств.",
+    ],
+    scenarios: ["Офисы обслуживания", "МФЦ", "Розничные сервисные зоны"],
+    faq: [
+      {
+        q: "Подходит ли линейка для высоконагруженных площадок?",
+        a: "Да, в линейке есть крупные конфигурации с высокой визуальной заметностью.",
+      },
+      {
+        q: "Можно ли сравнить форм-факторы перед выбором?",
+        a: "Да, внутри страницы доступны карточки моделей и их характеристики для сравнения.",
+      },
+    ],
+  },
+  ssc: {
+    usp: [
+      "Конфигурации касс самообслуживания под разные розничные сценарии.",
+      "Единая подача моделей для быстрого сравнения и выбора.",
+      "Адаптивность к требованиям конкретной торговой точки.",
+    ],
+    scenarios: ["Супермаркеты", "DIY и электроника", "Форматы self-checkout"],
+    faq: [
+      {
+        q: "Чем отличаются конфигурации внутри линейки?",
+        a: "Отличаются компоновкой пользовательской зоны и периферии под конкретный сценарий внедрения.",
+      },
+      {
+        q: "Есть ли поддержка пилотного запуска?",
+        a: "Да, можно начать с одной конфигурации и масштабировать решение на сеть.",
+      },
+    ],
+  },
+  adm: {
+    usp: [
+      "Самостоятельная категория для депозитных сценариев.",
+      "Набор визуальных материалов для уверенной продуктовой презентации.",
+      "Единый UX внутри каталога без смены логики навигации.",
+    ],
+    scenarios: ["Банковские отделения", "Премиальные зоны", "Проектные внедрения"],
+    faq: [
+      {
+        q: "Можно ли использовать страницу ADM как отдельный продуктовый лендинг?",
+        a: "Да, страница уже содержит структуру для переговорной демонстрации и расширяется дополнительными блоками.",
+      },
+      {
+        q: "Где смотреть характеристики?",
+        a: "Техническая информация доступна в карточках моделей в блоке характеристик.",
+      },
+    ],
+  },
+  info: {
+    usp: [
+      "Инфокиоски и платежные терминалы в едином продуктовым каркасе сайта.",
+      "Быстрое расширение линейки без изменения шаблона страницы.",
+      "Понятная структура для внутренних и внешних презентаций.",
+    ],
+    scenarios: ["Корпоративные холлы", "Госучреждения", "Навигационные сервисы"],
+    faq: [
+      {
+        q: "Можно ли расширить линейку новыми моделями?",
+        a: "Да, новые модели добавляются в каталог и автоматически появляются на странице линейки.",
+      },
+      {
+        q: "Есть ли материалы для согласования проекта?",
+        a: "Да, карточки, характеристики и консультация по запросу доступны на странице.",
+      },
+    ],
+  },
+  charging: {
+    usp: [
+      "Отдельное направление для EV-инфраструктуры внутри общей платформы решений.",
+      "Понятное позиционирование для коммерческих и инфраструктурных проектов.",
+      "Быстрый переход от ознакомления к запросу консультации.",
+    ],
+    scenarios: ["Паркинги и ТРЦ", "Корпоративные площадки", "Городская инфраструктура"],
+    faq: [
+      {
+        q: "Подходит ли линейка для масштабирования сети?",
+        a: "Да, архитектура раздела предусматривает добавление новых моделей и сценариев.",
+      },
+      {
+        q: "Как обсудить подбор станции под объект?",
+        a: "Нажмите кнопку связи на странице категории и отправьте параметры проекта.",
+      },
+    ],
+  },
+};
+
+const lineContent = lineContentMap[String(categoryId)] ?? {
+  usp: [
+    "Понятная структура линейки с быстрым переходом к нужной модели.",
+    "Единая подача характеристик и сценариев применения.",
+  ],
+  scenarios: ["Проектные внедрения", "Коммерческие объекты"],
+  faq: [
+    {
+      q: "Как подобрать конфигурацию?",
+      a: "Оставьте заявку через контакты, и команда подберет вариант под ваш сценарий.",
+    },
+  ],
+};
+
 ---
 
 <BaseLayout
   title={`${lineTitle} — САГА Технологии`}
-  description={lineIntro}
+  description={lineSeoDescription}
   footerVisible={true}
 >
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="/" aria-label="SAGA">
-        <img
-          src={withBase("/assets/logos/saga_logo_black.svg")}
-          alt="SAGA"
-          class="brand-logo"
-        />
-      </a>
-
-      <nav class="main-nav" aria-label="Навигация по сайту">
-        {headerNavItems.map((item) => (
-          <a href={item.href} class="nav-link">{item.label}</a>
-        ))}
-      </nav>
-
-      <a class="header-cta" href="/contacts">Связаться</a>
-    </div>
-  </header>
+  <InnerPageHeader />
 
   <main class="snap-shell">
     <section class="screen panel-screen line-screen-hero">
@@ -86,8 +202,11 @@ const headerNavItems = [
             <p class="hero-text line-hero-text">{lineIntro}</p>
 
             <div class="hero-actions" style="margin-top: 18px;">
-              <a href="/company" class="btn btn-secondary">
+              <a href={withBase("/company")} class="btn btn-secondary">
                 О компании
+              </a>
+              <a href={withBase("/contacts")} class="btn btn-primary" data-track-event="line_discuss_project">
+                Обсудить проект
               </a>
             </div>
           </div>
@@ -173,6 +292,7 @@ const headerNavItems = [
                         href={bookletHref}
                         target="_blank"
                         rel="noopener"
+                        data-track-event="line_download_pdf"
                       >
                         <svg class="btn-pdf-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
                           <path fill="currentColor" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2 5 5h-5V4zM8 13h2.5a1.5 1.5 0 0 1 0 3H8v-3zm4 0h2v2h-2v-2zm0-2a2 2 0 0 1 2-2h1v-2h-4v4h1z"/>
@@ -183,8 +303,9 @@ const headerNavItems = [
 
                     <a
                       class="btn btn-ghost btn-pdf"
-                      href="/contacts"
+                      href={withBase("/contacts")}
                       aria-label="Перейти к контактам"
+                      data-track-event="line_to_contacts"
                     >
                       <img
                         class="btn-phone-icon"
@@ -200,6 +321,71 @@ const headerNavItems = [
               </article>
             );
           })}
+        </div>
+      </div>
+    </section>
+
+    <section class="screen panel-screen">
+      <div class="container panel-grid">
+        <div class="section-copy reveal">
+          <div class="eyebrow">Преимущества линейки</div>
+          <h2>Почему выбирают {lineEyebrow.toLowerCase()} SAGA.</h2>
+          <p>
+            В этом разделе собраны ключевые причины выбора категории: от
+            инженерной зрелости до удобства масштабирования в рамках сети.
+          </p>
+        </div>
+
+        <div class="trust-stats">
+          {lineContent.usp.map((item, idx) => (
+            <article class={`trust-card reveal reveal-delay-${Math.min(idx + 1, 3)}`}>
+              <div class="trust-value">0{idx + 1}</div>
+              <div class="trust-label">{item}</div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="screen panel-screen">
+      <div class="container panel-grid">
+        <div class="section-copy reveal">
+          <div class="eyebrow">Сценарии</div>
+          <h2>Где применяют решения категории.</h2>
+          <p>
+            Типовые сценарии помогают быстрее понять, в каких пространствах и
+            процессах категория дает наибольшую ценность.
+          </p>
+        </div>
+
+        <div class="industries-grid">
+          {lineContent.scenarios.map((scenario, idx) => (
+            <article class={`industry-card reveal reveal-delay-${Math.min(idx + 1, 3)}`}>
+              <span>{scenario}</span>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="screen panel-screen">
+      <div class="container panel-grid">
+        <div class="section-copy reveal">
+          <div class="eyebrow">FAQ</div>
+          <h2>Частые вопросы по категории.</h2>
+          <p>
+            Короткие ответы для этапа первичного выбора. Для детальной
+            спецификации можно перейти к контакту с командой.
+          </p>
+        </div>
+
+        <div class="trust-stats">
+          {lineContent.faq.map((item, idx) => (
+            <article class={`trust-card reveal reveal-delay-${Math.min(idx + 1, 3)}`}>
+              <div class="contact-kicker">{item.q}</div>
+              <p>{item.a}</p>
+            </article>
+          ))}
         </div>
       </div>
     </section>

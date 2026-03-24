@@ -54,6 +54,34 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  flex-wrap: wrap;
+}
+
+.site-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.site-footer-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  color: rgba(15, 17, 21, 0.62);
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.site-footer-link:hover {
+  color: var(--text);
+  border-color: var(--line);
+  background: rgba(255, 255, 255, 0.7);
 }
 
 .site-footer-right {
@@ -277,6 +305,15 @@ select {
   color: var(--text);
 }
 
+.inner-hero-screen {
+  min-height: 92svh;
+}
+
+.inner-hero-screen .hero-title {
+  max-width: 14ch;
+  font-size: clamp(38px, 6vw, 76px);
+}
+
 .hero-video,
 .hero-overlay {
   position: absolute;
@@ -369,22 +406,19 @@ h3 {
   gap: 14px;
 }
 
-.hero-screen .btn-primary {
-  border: 1px solid rgba(111, 130, 157, 0.28);
-  box-shadow:
-    0 12px 28px rgba(32, 50, 73, 0.14),
-    0 1px 0 rgba(255, 255, 255, 0.6) inset;
-}
-
-.hero-screen .btn-secondary {
+.hero-screen .btn-hero {
+  min-width: 190px;
   border: 1px solid rgba(96, 115, 141, 0.28);
   background: rgba(255, 255, 255, 0.72);
   color: #3d4b60;
+  box-shadow:
+    0 12px 28px rgba(32, 50, 73, 0.14),
+    0 1px 0 rgba(255, 255, 255, 0.6) inset;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
 }
 
-.hero-screen .btn-secondary:hover {
+.hero-screen .btn-hero:hover {
   border-color: rgba(83, 103, 132, 0.46);
   background: rgba(255, 255, 255, 0.86);
   color: #2f3a4e;
@@ -457,6 +491,96 @@ h3 {
   display: grid;
   gap: 30px;
   align-items: start;
+}
+
+.inner-screen {
+  min-height: auto;
+  padding: calc(var(--header-h) + 26px) 0 56px;
+}
+
+.final-sticky-screen {
+  min-height: auto;
+  padding: calc(var(--header-h) + 12px) 0 34px;
+}
+
+.final-sticky-cta {
+  position: sticky;
+  bottom: 18px;
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: rgba(249, 250, 252, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-strong);
+  padding: 22px;
+  display: grid;
+  gap: 14px;
+}
+
+.final-sticky-copy h2 {
+  font-size: clamp(24px, 3vw, 40px);
+  line-height: 1.06;
+  margin-bottom: 8px;
+}
+
+.final-sticky-copy p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.info-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.info-card {
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.58);
+  background: var(--surface);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-soft);
+  padding: 24px;
+  display: grid;
+  gap: 12px;
+  min-height: 100%;
+  transition:
+    transform 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(15, 17, 21, 0.16);
+  box-shadow: var(--shadow-strong);
+}
+
+.info-card-meta {
+  display: inline-flex;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 6px 12px;
+  border: 1px solid rgba(15, 17, 21, 0.12);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.54);
+}
+
+.info-card h3 {
+  font-size: clamp(24px, 2.4vw, 34px);
+  line-height: 1.04;
+  color: rgba(15, 17, 21, 0.92);
+}
+
+.info-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.65;
 }
 
 .panel-grid-wide {
@@ -771,10 +895,84 @@ h3 {
   align-items: center;
 }
 
+.lead-forms-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.lead-form {
+  display: grid;
+  gap: 12px;
+}
+
+.lead-form label {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.lead-form input,
+.lead-form select,
+.lead-form textarea {
+  width: 100%;
+  border: 1px solid rgba(105, 124, 150, 0.26);
+  background: rgba(255, 255, 255, 0.84);
+  color: var(--text);
+  border-radius: 14px;
+  min-height: 44px;
+  padding: 10px 12px;
+  font: inherit;
+}
+
+.lead-form textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.lead-form input:focus,
+.lead-form select:focus,
+.lead-form textarea:focus {
+  outline: 2px solid rgba(63, 89, 123, 0.24);
+  outline-offset: 1px;
+}
+
 .contact-screen {
   align-items: center;
   padding-top: 40px;
   padding-bottom: 40px;
+}
+
+.mobile-sticky-cta {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  z-index: 48;
+  display: none;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background: rgba(249, 250, 252, 0.9);
+  border: 1px solid rgba(105, 124, 150, 0.2);
+  box-shadow: 0 10px 24px rgba(19, 31, 49, 0.2);
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s ease;
+}
+
+.mobile-sticky-cta.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+}
+
+.mobile-sticky-cta .btn {
+  flex: 1 1 0;
+  min-height: 44px;
 }
 
 .contact-card {
@@ -1483,6 +1681,10 @@ h3 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .info-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .company-layout {
     grid-template-columns: 1fr;
   }
@@ -1580,13 +1782,25 @@ h3 {
 
   .products-grid,
   .industries-grid,
+  .lead-forms-grid,
   .badge-strip,
-  .trust-stats {
+  .trust-stats,
+  .info-cards {
     grid-template-columns: 1fr;
   }
 
   .hero-title {
     max-width: 11ch;
+  }
+
+  .hero-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .hero-screen .btn-hero {
+    min-width: 0;
+    flex: 1 1 220px;
   }
 
   .product-screen-inner {
@@ -1636,6 +1850,10 @@ h3 {
   .lightbox-image {
     max-width: 100%;
     max-height: 100%;
+  }
+
+  .mobile-sticky-cta {
+    display: flex;
   }
 }
 
@@ -1721,6 +1939,19 @@ h3 {
     font-size: 15px;
   }
 
+  .hero-actions {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .hero-screen .btn-hero {
+    width: auto;
+    min-width: 0;
+    flex: 0 0 auto;
+  }
+
   .product-body,
   .contact-card,
   .trust-card,
@@ -1740,6 +1971,12 @@ h3 {
   .contact-icon {
     width: 52px;
     height: 52px;
+  }
+
+  .mobile-sticky-cta {
+    left: 8px;
+    right: 8px;
+    bottom: calc(8px + env(safe-area-inset-bottom, 0px));
   }
 
   .product-carousel {

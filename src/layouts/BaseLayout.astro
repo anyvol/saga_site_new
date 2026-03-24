@@ -7,16 +7,22 @@ interface Props {
   description?: string;
   footerVisible?: boolean;
   footerVersion?: string;
+  canonicalPath?: string;
 }
 
 const {
   title = "SAGA — Российские решения самообслуживания",
   description = "АО «САГА Технологии» — банкоматы, кассы самообслуживания и системы управления очередью.",
   footerVisible = false,
-  footerVersion = "0.151"
+  footerVersion = "0.5",
+  canonicalPath = Astro.url.pathname
 } = Astro.props;
 
+const baseUrl = new URL(import.meta.env.BASE_URL, Astro.site ?? Astro.url);
+const canonicalUrl = new URL(canonicalPath, baseUrl).toString();
 const favicon = `${import.meta.env.BASE_URL.replace(/\/+$/, "")}/assets/logos/saga_logo_black.svg`;
+const withBase = (path: string) =>
+  `${import.meta.env.BASE_URL.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
 ---
 
 <!doctype html>
@@ -26,11 +32,86 @@ const favicon = `${import.meta.env.BASE_URL.replace(/\/+$/, "")}/assets/logos/sa
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
     <meta name="theme-color" content="#0f1115" />
     <link rel="icon" href={favicon} type="image/svg+xml" />
   </head>
   <body>
     <slot />
+    <div class="mobile-sticky-cta" aria-label="Быстрые действия">
+      <a
+        href="tel:+78002222197"
+        class="btn btn-primary"
+        data-track-event="mobile_call"
+      >
+        Позвонить
+      </a>
+      <a
+        href={withBase("/contacts")}
+        class="btn btn-secondary"
+        data-track-event="mobile_lead"
+      >
+        Оставить заявку
+      </a>
+    </div>
     <SiteFooter isVisible={footerVisible} version={footerVersion} />
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      window.sagaTrack = (eventName, payload = {}) => {
+        window.dataLayer.push({
+          event: eventName,
+          ...payload,
+          page: window.location.pathname,
+          ts: Date.now(),
+        });
+      };
+
+      document.addEventListener("click", (event) => {
+        const target = event.target instanceof Element ? event.target : null;
+        const trackNode = target?.closest("[data-track-event]");
+        if (!trackNode) return;
+        const eventName = trackNode.getAttribute("data-track-event");
+        if (!eventName) return;
+        const label = trackNode.textContent?.trim() || "";
+        window.sagaTrack(eventName, { label });
+      });
+
+      const initStickyCtaVisibility = () => {
+        const stickyCta = document.querySelector(".mobile-sticky-cta");
+        const footer = document.getElementById("site-footer");
+        if (!stickyCta || !footer) return;
+
+        const updateStickyVisibility = (isFooterVisible) => {
+          const isMobile = window.innerWidth <= 860;
+          stickyCta.classList.toggle("is-hidden", isMobile && isFooterVisible);
+        };
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => updateStickyVisibility(entry.isIntersecting));
+          },
+          { threshold: 0.01 }
+        );
+
+        observer.observe(footer);
+        window.addEventListener("resize", () => {
+          const footerVisible = footer.getBoundingClientRect().top < window.innerHeight;
+          updateStickyVisibility(footerVisible);
+        });
+      };
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initStickyCtaVisibility, { once: true });
+      } else {
+        initStickyCtaVisibility();
+      }
+    </script>
   </body>
 </html>

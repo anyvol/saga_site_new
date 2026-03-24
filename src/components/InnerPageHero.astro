@@ -1,0 +1,43 @@
+---
+interface ActionItem {
+  label: string;
+  href: string;
+  trackEvent?: string;
+}
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  text: string;
+  actions?: ActionItem[];
+}
+
+const { eyebrow, title, text, actions = [] } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const withBase = (path: string) =>
+  `${base.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
+const resolveHref = (href: string) =>
+  href.startsWith("/") ? withBase(href) : href;
+---
+
+<section class="screen hero-screen inner-hero-screen">
+  <div class="hero-overlay"></div>
+  <div class="container hero-content">
+    <div class="eyebrow reveal">{eyebrow}</div>
+    <h1 class="hero-title reveal reveal-delay-1">{title}</h1>
+    <p class="hero-text reveal reveal-delay-2">{text}</p>
+    {actions.length > 0 && (
+      <div class="hero-actions reveal reveal-delay-3">
+        {actions.map((action) => (
+          <a
+            href={resolveHref(action.href)}
+            class="btn btn-hero btn-secondary"
+            data-track-event={action.trackEvent}
+          >
+            {action.label}
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+</section>

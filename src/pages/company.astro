@@ -1,15 +1,31 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import InnerPageHeader from "../components/InnerPageHeader.astro";
 
 const base = import.meta.env.BASE_URL;
 const withBase = (path: string) =>
   `${base.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
 
-const headerNavItems = [
-  { label: "Продукты", href: "/" },
-  { label: "Компания", href: "/company" },
-  { label: "Контакты", href: "/contacts" },
+const companyPillars = [
+  {
+    value: "Миссия",
+    label: "Создаем надежные платформы самообслуживания, которые масштабируются под задачи заказчика.",
+  },
+  {
+    value: "Производство",
+    label: "Собственная инженерная и производственная база в России с контролем полного цикла.",
+  },
+  {
+    value: "Сертификация",
+    label: "Работаем в соответствии с требованиями отрасли и внутренними стандартами качества.",
+  },
+  {
+    value: "Партнерство",
+    label: "Сопровождаем проекты от пилота до сервисной эксплуатации на всей сети.",
+  },
 ];
+
+const companyIndustries = ["Банки", "Ритейл", "Госсектор", "Транспорт", "Инфраструктура", "EVC"];
 ---
 
 <BaseLayout
@@ -17,25 +33,7 @@ const headerNavItems = [
   description="АО «САГА Технологии» — производство и сервисная поддержка решений самообслуживания."
   footerVisible={true}
 >
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="/" aria-label="SAGA">
-        <img
-          src={withBase("/assets/logos/saga_logo_black.svg")}
-          alt="SAGA"
-          class="brand-logo"
-        />
-      </a>
-
-      <nav class="main-nav" aria-label="Навигация по сайту">
-        {headerNavItems.map((item) => (
-          <a href={item.href} class="nav-link">{item.label}</a>
-        ))}
-      </nav>
-
-      <a class="header-cta" href="/contacts">Связаться</a>
-    </div>
-  </header>
+  <InnerPageHeader />
 
   <main class="snap-shell">
     <section class="screen panel-screen" id="company">
@@ -55,7 +53,16 @@ const headerNavItems = [
           </p>
 
           <div class="hero-actions">
-            <a href="/contacts" class="btn btn-primary">Связаться с нами</a>
+            <a href={withBase("/contacts")} class="btn btn-primary" data-track-event="company_discuss_project">
+              Обсудить проект
+            </a>
+            <a
+              href="mailto:info@saga-tech.ru?subject=Запрос%20презентации%20о%20компании"
+              class="btn btn-secondary"
+              data-track-event="company_request_presentation"
+            >
+              Скачать презентацию
+            </a>
           </div>
         </div>
 
@@ -97,6 +104,50 @@ const headerNavItems = [
               </p>
             </div>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen panel-screen" id="company-pillars">
+      <div class="container panel-grid">
+        <div class="section-copy reveal">
+          <div class="eyebrow">Ключевые блоки</div>
+          <h2>Миссия, производство и партнерская модель.</h2>
+          <p>
+            Этот раздел помогает быстро считать, как устроена компания: зачем мы
+            создаем решения, как обеспечиваем качество и как ведем долгосрочное
+            сопровождение после запуска.
+          </p>
+        </div>
+
+        <div class="trust-stats">
+          {companyPillars.map((item, idx) => (
+            <div class={`trust-card reveal reveal-delay-${Math.min(idx + 1, 3)}`}>
+              <div class="trust-value">{item.value}</div>
+              <div class="trust-label">{item.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="screen panel-screen" id="company-industries">
+      <div class="container panel-grid">
+        <div class="section-copy reveal">
+          <div class="eyebrow">Отрасли</div>
+          <h2>Работаем с проектами в ключевых сегментах.</h2>
+          <p>
+            Платформа решений легко адаптируется под сценарии обслуживания в
+            разных отраслях: от банковских зон до инфраструктурных площадок.
+          </p>
+        </div>
+
+        <div class="industries-grid">
+          {companyIndustries.map((industry, idx) => (
+            <article class={`industry-card reveal reveal-delay-${Math.min(idx + 1, 3)}`}>
+              <span>{industry}</span>
+            </article>
+          ))}
         </div>
       </div>
     </section>

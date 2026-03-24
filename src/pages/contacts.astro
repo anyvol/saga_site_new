@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import InnerPageHeader from "../components/InnerPageHeader.astro";
 
 const base = import.meta.env.BASE_URL;
 const withBase = (path: string) =>
@@ -33,10 +34,13 @@ const contactIcons = [
   },
 ];
 
-const headerNavItems = [
-  { label: "Продукты", href: "/" },
-  { label: "Компания", href: "/company" },
-  { label: "Контакты", href: "/contacts" },
+const productLines = [
+  { value: "atm", label: "Банкоматы" },
+  { value: "qms", label: "СУО" },
+  { value: "ssc", label: "Кассы самообслуживания" },
+  { value: "adm", label: "ADM" },
+  { value: "info", label: "Инфокиоски" },
+  { value: "charging", label: "Зарядные станции" },
 ];
 ---
 
@@ -45,25 +49,7 @@ const headerNavItems = [
   description="Связаться с АО «САГА Технологии»: телефоны, почта, Telegram, VK."
   footerVisible={true}
 >
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="/" aria-label="SAGA">
-        <img
-          src={withBase("/assets/logos/saga_logo_black.svg")}
-          alt="SAGA"
-          class="brand-logo"
-        />
-      </a>
-
-      <nav class="main-nav" aria-label="Навигация по сайту">
-        {headerNavItems.map((item) => (
-          <a href={item.href} class="nav-link">{item.label}</a>
-        ))}
-      </nav>
-
-      <a class="header-cta" href="/contacts">Связаться</a>
-    </div>
-  </header>
+  <InnerPageHeader />
 
   <main class="snap-shell">
     <section class="screen panel-screen contact-screen" id="contacts">
@@ -108,9 +94,130 @@ const headerNavItems = [
             ))}
           </div>
         </div>
+
+        <div class="lead-forms-grid">
+          <article class="contact-card reveal reveal-delay-2">
+            <div class="contact-kicker">Обсудить проект</div>
+            <form class="lead-form" data-lead-form="project">
+              <label>
+                Имя
+                <input name="name" type="text" required />
+              </label>
+              <label>
+                Телефон или email
+                <input name="contact" type="text" required />
+              </label>
+              <label>
+                Отрасль
+                <select name="industry" required>
+                  <option value="">Выберите отрасль</option>
+                  <option value="bank">Банк</option>
+                  <option value="retail">Ритейл</option>
+                  <option value="gov">Госсектор</option>
+                  <option value="infra">Инфраструктура</option>
+                </select>
+              </label>
+              <label>
+                Тип оборудования
+                <select name="line" required>
+                  <option value="">Выберите линейку</option>
+                  {productLines.map((line) => (
+                    <option value={line.value}>{line.label}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Планируемый объем
+                <input name="volume" type="text" placeholder="Например: 20 устройств" />
+              </label>
+              <label>
+                Комментарий
+                <textarea name="comment" rows={3}></textarea>
+              </label>
+              <button type="submit" class="btn btn-primary" data-track-event="lead_form_project_submit">
+                Отправить запрос
+              </button>
+            </form>
+          </article>
+
+          <article class="contact-card reveal reveal-delay-3">
+            <div class="contact-kicker">Быстрый запрос КП</div>
+            <form class="lead-form" data-lead-form="quote">
+              <label>
+                Компания
+                <input name="company" type="text" required />
+              </label>
+              <label>
+                Контактное лицо
+                <input name="name" type="text" required />
+              </label>
+              <label>
+                Линейка продуктов
+                <select name="line" required>
+                  <option value="">Выберите линейку</option>
+                  {productLines.map((line) => (
+                    <option value={line.value}>{line.label}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Модель или конфигурация
+                <input name="model" type="text" placeholder="Например: ATM 27" />
+              </label>
+              <label>
+                Количество
+                <input name="quantity" type="text" required />
+              </label>
+              <button type="submit" class="btn btn-secondary" data-track-event="lead_form_quote_submit">
+                Запросить КП
+              </button>
+            </form>
+          </article>
+        </div>
       </div>
     </section>
   </main>
 
+  <script is:inline>
+    const buildMailtoBody = (values) =>
+      Object.entries(values)
+        .filter(([, value]) => String(value || "").trim())
+        .map(([key, value]) => `${key}: ${value}`)
+        .join("\n");
+
+    const formToObject = (form) => {
+      const data = new FormData(form);
+      return Object.fromEntries(data.entries());
+    };
+
+    const openMailClient = (subject, payload) => {
+      const body = buildMailtoBody(payload);
+      const href = `mailto:info@saga-tech.ru?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      window.location.href = href;
+    };
+
+    document.querySelectorAll("[data-lead-form]").forEach((formNode) => {
+      formNode.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        if (!(form instanceof HTMLFormElement)) return;
+        if (!form.reportValidity()) return;
+
+        const type = form.getAttribute("data-lead-form");
+        const values = formToObject(form);
+        const subject =
+          type === "quote"
+            ? "Запрос КП с сайта SAGA"
+            : "Запрос на обсуждение проекта с сайта SAGA";
+
+        if (window.sagaTrack) {
+          window.sagaTrack(type === "quote" ? "lead_quote_submit" : "lead_project_submit", {
+            line: values.line || "",
+          });
+        }
+        openMailClient(subject, values);
+      });
+    });
+  </script>
 </BaseLayout>
 

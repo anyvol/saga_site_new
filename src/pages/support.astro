@@ -1,0 +1,37 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import InnerPageHeader from "../components/InnerPageHeader.astro";
+import InnerPageHero from "../components/InnerPageHero.astro";
+import InnerPageSection from "../components/InnerPageSection.astro";
+import FinalStickyCta from "../components/FinalStickyCta.astro";
+---
+
+<BaseLayout
+  title="Поддержка SAGA"
+  description="Сервисная поддержка, обслуживание и сопровождение решений SAGA."
+  footerVisible={true}
+>
+  <InnerPageHeader />
+  <main class="snap-shell">
+    <InnerPageHero
+      eyebrow="Поддержка"
+      title="Профессиональный сервис для оборудования и ПО."
+      text="Обеспечиваем жизненный цикл решений после запуска: от регламентного обслуживания до оперативного реагирования и консультаций для команды заказчика."
+      actions={[
+        { label: "Оставить заявку", href: "/contacts", trackEvent: "support_lead" },
+        { label: "О компании", href: "/company" },
+      ]}
+    />
+
+    <InnerPageSection
+      eyebrow="Сервисные направления"
+      title="Поддержка, которая снижает простои и операционные риски."
+      cards={[
+        { title: "Сервисное обслуживание", text: "Плановые работы, диагностика, замена узлов и поддержание оборудования в рабочем состоянии.", meta: "SLA" },
+        { title: "Техническая консультация", text: "Поддержка команд внедрения и эксплуатации по инфраструктуре, интеграции и регламентам.", meta: "Expert Help" },
+        { title: "Обновления и развитие", text: "Актуализация ПО и развитие функционала в рамках стратегии цифрового контура.", meta: "Roadmap" },
+      ]}
+    />
+    <FinalStickyCta />
+  </main>
+</BaseLayout>

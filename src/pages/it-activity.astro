@@ -1,0 +1,37 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import InnerPageHeader from "../components/InnerPageHeader.astro";
+import InnerPageHero from "../components/InnerPageHero.astro";
+import InnerPageSection from "../components/InnerPageSection.astro";
+import FinalStickyCta from "../components/FinalStickyCta.astro";
+---
+
+<BaseLayout
+  title="ИТ-деятельность SAGA"
+  description="ИТ-консалтинг, разработка и развитие цифровых сервисов SAGA."
+  footerVisible={true}
+>
+  <InnerPageHeader />
+  <main class="snap-shell">
+    <InnerPageHero
+      eyebrow="ИТ-деятельность"
+      title="ИТ-экспертиза как часть продуктовой платформы."
+      text="Помимо оборудования, мы развиваем программные и интеграционные компетенции: управление устройствами, сервисные интерфейсы и цифровые контуры для бизнеса."
+      actions={[
+        { label: "Запросить консультацию", href: "/contacts", trackEvent: "it_consult" },
+        { label: "Решения", href: "/solutions" },
+      ]}
+    />
+
+    <InnerPageSection
+      eyebrow="Направления"
+      title="Консалтинг, интеграция и сопровождение."
+      cards={[
+        { title: "ИТ-консалтинг", text: "Проектирование архитектуры решений и выбор оптимальных технологических сценариев.", meta: "Consulting" },
+        { title: "Интеграция", text: "Подключение оборудования и сервисов к корпоративным системам заказчика.", meta: "Integration" },
+        { title: "Поддержка цифрового контура", text: "Обновления, мониторинг и эксплуатационная устойчивость в долгую.", meta: "Operations" },
+      ]}
+    />
+    <FinalStickyCta />
+  </main>
+</BaseLayout>

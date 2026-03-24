@@ -1,0 +1,37 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import InnerPageHeader from "../components/InnerPageHeader.astro";
+import InnerPageHero from "../components/InnerPageHero.astro";
+import InnerPageSection from "../components/InnerPageSection.astro";
+import FinalStickyCta from "../components/FinalStickyCta.astro";
+---
+
+<BaseLayout
+  title="Новости SAGA"
+  description="Новости компании, новые проекты и отраслевые события SAGA."
+  footerVisible={true}
+>
+  <InnerPageHeader />
+  <main class="snap-shell">
+    <InnerPageHero
+      eyebrow="Новости"
+      title="Ключевые события и обновления корпорации SAGA."
+      text="Раздел отражает развитие компании, отраслевые проекты и новые технологические инициативы. Карточки ниже - стартовый формат новостной ленты."
+      actions={[
+        { label: "Для прессы", href: "/press" },
+        { label: "Связаться", href: "/contacts", trackEvent: "news_contact" },
+      ]}
+    />
+
+    <InnerPageSection
+      eyebrow="Лента"
+      title="Последние публикации"
+      cards={[
+        { title: "О правах заказчика на РИД", text: "Соблюдение и защита исключительных прав - один из приоритетов технологического партнерства.", meta: "29.10.2025" },
+        { title: "Учебные классы SAGA представлены частным школам", text: "Корпорация стала партнером профильной конференции и представила образовательные решения.", meta: "22.10.2024" },
+        { title: "САГА стала резидентом ОЭЗ Технополис Москва", text: "Производственные мощности расширены на новой площадке для роста проектов.", meta: "24.09.2024" },
+      ]}
+    />
+    <FinalStickyCta />
+  </main>
+</BaseLayout>

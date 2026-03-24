@@ -1,0 +1,40 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import InnerPageHeader from "../components/InnerPageHeader.astro";
+import InnerPageHero from "../components/InnerPageHero.astro";
+import InnerPageSection from "../components/InnerPageSection.astro";
+import FinalStickyCta from "../components/FinalStickyCta.astro";
+---
+
+<BaseLayout
+  title="Оборудование SAGA"
+  description="Линейка оборудования SAGA: банкоматы, кассы самообслуживания, ADM, инфокиоски и зарядные станции."
+  footerVisible={true}
+>
+  <InnerPageHeader />
+  <main class="snap-shell">
+    <InnerPageHero
+      eyebrow="Оборудование"
+      title="Единая платформа устройств самообслуживания."
+      text="Разрабатываем и производим оборудование для банковских, торговых и инфраструктурных сценариев. Каждая линейка создается как часть единой продуктовой системы."
+      actions={[
+        { label: "Открыть каталог", href: "/" },
+        { label: "Запросить подбор", href: "/contacts", trackEvent: "equipment_lead" },
+      ]}
+    />
+
+    <InnerPageSection
+      eyebrow="Продуктовые линейки"
+      title="Выбор по задачам, трафику и пространству."
+      cards={[
+        { title: "Банкоматы SAGA", text: "Линейка 19-32 дюйма для отделений, зон 24/7 и high-traffic площадок.", meta: "ATM" },
+        { title: "Кассы самообслуживания", text: "Сценарии ритейла и сервиса с фокусом на скорость оплаты и удобство клиента.", meta: "SSC" },
+        { title: "ADM и депозитные решения", text: "Продукты для автоматизации операций с наличностью в банковском контуре.", meta: "ADM" },
+        { title: "Системы управления очередью", text: "Гибкие вертикальные и горизонтальные форм-факторы для офисов обслуживания.", meta: "QMS" },
+        { title: "Инфокиоски", text: "Терминалы для навигации, информирования и цифровых сервисов в общественных пространствах.", meta: "INFO" },
+        { title: "Зарядные станции", text: "Индустриальные решения для EV-инфраструктуры и расширения продуктовой матрицы.", meta: "EV" },
+      ]}
+    />
+    <FinalStickyCta />
+  </main>
+</BaseLayout>

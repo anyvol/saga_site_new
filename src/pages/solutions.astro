@@ -1,0 +1,50 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import InnerPageHeader from "../components/InnerPageHeader.astro";
+import InnerPageHero from "../components/InnerPageHero.astro";
+import InnerPageSection from "../components/InnerPageSection.astro";
+import FinalStickyCta from "../components/FinalStickyCta.astro";
+---
+
+<BaseLayout
+  title="Решения SAGA"
+  description="Комплексные решения SAGA: от проектирования и внедрения до эксплуатации."
+  footerVisible={true}
+>
+  <InnerPageHeader />
+  <main class="snap-shell">
+    <InnerPageHero
+      eyebrow="Решения"
+      title="Комплексные B2B-решения от идеи до запуска."
+      text="Наша команда выстраивает полный цикл: аналитика, проектирование, поставка оборудования и промышленный запуск. Фокус - предсказуемый результат, SLA и масштабирование."
+      actions={[
+        { label: "Обсудить проект", href: "/contacts", trackEvent: "solutions_discuss" },
+        { label: "Смотреть оборудование", href: "/equipment", trackEvent: "solutions_equipment" },
+      ]}
+    />
+
+    <InnerPageSection
+      eyebrow="Ключевые направления"
+      title="Решения для банков, ритейла и городской инфраструктуры."
+      lead="Используем модульный подход: готовые отраслевые сценарии адаптируются под процессы заказчика без длительных и дорогих переделок."
+      cards={[
+        { title: "Автоматизация инкассации", text: "Снижение затрат на обработку наличности и прозрачность операций в масштабируемом контуре.", meta: "Финтех" },
+        { title: "СУО и инфокиоски", text: "Управление клиентским потоком, ускорение обслуживания и рост NPS в отделениях и сервисных центрах.", meta: "Клиентский сервис" },
+        { title: "Решения для парковок и транспорта", text: "Единый цифровой контур оплаты, информирования и управления доступом.", meta: "Smart city" },
+      ]}
+    />
+
+    <InnerPageSection
+      id="impact"
+      eyebrow="Эффект внедрения"
+      title="Переходим от локальных пилотов к устойчивой операционной модели."
+      cards={[
+        { title: "Сокращение операционных издержек", text: "Оптимизация обслуживания и удаленный мониторинг снижают нагрузку на внутренние команды." },
+        { title: "Быстрый запуск", text: "Готовые референсные сценарии и отработанные регламенты сокращают time-to-market." },
+        { title: "Управляемое масштабирование", text: "Архитектура решений поддерживает расширение на филиалы, новые точки и регионы." },
+      ]}
+    />
+
+    <FinalStickyCta />
+  </main>
+</BaseLayout>
