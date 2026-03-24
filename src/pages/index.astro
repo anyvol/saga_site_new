@@ -407,14 +407,6 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
 
 
           <article class="company-media-card reveal reveal-delay-2">
-            <video
-              src={withBase("/assets/factory_saga_1.mp4")}
-              autoplay
-              muted
-              loop
-              playsinline
-              preload="metadata"
-            ></video>
             <div class="feature-media-overlay">
               <div class="feature-kicker">Производство</div>
               <h3>Своё производство</h3>
@@ -423,17 +415,19 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
                 продуктовую витрину с реальным производственным контуром.
               </p>
             </div>
+            <div class="company-media-card-media">
+              <video
+                src={withBase("/assets/factory_saga_1.mp4")}
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="metadata"
+              ></video>
+            </div>
           </article>
 
           <article class="company-media-card reveal reveal-delay-3">
-            <video
-              src={withBase("/assets/factory_saga_2.mp4")}
-              autoplay
-              muted
-              loop
-              playsinline
-              preload="metadata"
-            ></video>
             <div class="feature-media-overlay">
               <div class="feature-kicker">Инженерия</div>
               <h3>Системная разработка и выпуск</h3>
@@ -441,6 +435,16 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
                 Такой блок помогает коллегам и партнёрам быстро считать масштаб,
                 зрелость и industrial feel компании.
               </p>
+            </div>
+            <div class="company-media-card-media">
+              <video
+                src={withBase("/assets/factory_saga_2.mp4")}
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="metadata"
+              ></video>
             </div>
           </article>
         </div>
