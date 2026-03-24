@@ -1,4 +1,6 @@
 ---
+import { homeContactsHref } from "../utils/sitePaths";
+
 interface Props {
   title?: string;
   text?: string;
@@ -9,9 +11,7 @@ const {
   text = "Подберем конфигурацию под ваш сценарий и сроки внедрения.",
 } = Astro.props;
 
-const base = import.meta.env.BASE_URL;
-const withBase = (path: string) =>
-  `${base.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
+const contactsHref = homeContactsHref();
 ---
 
 <section class="screen panel-screen final-sticky-screen">
@@ -23,7 +23,7 @@ const withBase = (path: string) =>
         <p>{text}</p>
       </div>
       <div class="hero-actions">
-        <a href={withBase("/contacts")} class="btn btn-primary" data-track-event="final_cta_contact">
+        <a href={contactsHref} class="btn btn-primary" data-track-event="final_cta_contact">
           Оставить заявку
         </a>
         <a href="tel:+78002222197" class="btn btn-ghost" data-track-event="final_cta_call">

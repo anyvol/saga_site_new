@@ -16,8 +16,16 @@ const { eyebrow, title, text, actions = [] } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const withBase = (path: string) =>
   `${base.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
-const resolveHref = (href: string) =>
-  href.startsWith("/") ? withBase(href) : href;
+const resolveHref = (href: string) => {
+  if (href.startsWith("/") && href.includes("#")) {
+    const i = href.indexOf("#");
+    const path = href.slice(0, i) || "/";
+    const hash = href.slice(i + 1);
+    return `${withBase(path)}#${hash}`;
+  }
+  if (href.startsWith("/")) return withBase(href);
+  return href;
+};
 ---
 
 <section class="screen hero-screen inner-hero-screen">

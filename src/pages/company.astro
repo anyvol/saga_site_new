@@ -1,10 +1,12 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import InnerPageHeader from "../components/InnerPageHeader.astro";
+import { homeContactsHref } from "../utils/sitePaths";
 
 const base = import.meta.env.BASE_URL;
 const withBase = (path: string) =>
   `${base.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
+const contactsHref = homeContactsHref();
 
 const companyPillars = [
   {
@@ -62,7 +64,7 @@ const companyIndustries = [
           </p>
 
           <div class="hero-actions">
-            <a href={withBase("/contacts")} class="btn btn-primary" data-track-event="company_discuss_project">
+            <a href={contactsHref} class="btn btn-primary" data-track-event="company_discuss_project">
               Обсудить проект
             </a>
             <a

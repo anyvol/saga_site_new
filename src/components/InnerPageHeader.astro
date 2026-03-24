@@ -1,11 +1,14 @@
 ---
+import { homeContactsHref } from "../utils/sitePaths";
+
+const contactsHref = homeContactsHref();
 const navLinks = [
   { label: "Главная", href: "/" },
   { label: "Решения", href: "/solutions" },
   { label: "Оборудование", href: "/equipment" },
   { label: "Поддержка", href: "/support" },
   { label: "Новости", href: "/news" },
-  { label: "Контакты", href: "/contacts" },
+  { label: "Контакты", href: contactsHref },
 ];
 const base = import.meta.env.BASE_URL;
 const withBase = (path: string) =>
@@ -24,7 +27,12 @@ const withBase = (path: string) =>
 
     <nav class="main-nav" aria-label="Основная навигация">
       {navLinks.map((item) => (
-        <a href={withBase(item.href)} class="nav-link">{item.label}</a>
+        <a
+          href={item.href.includes("#") ? item.href : withBase(item.href)}
+          class="nav-link"
+        >
+          {item.label}
+        </a>
       ))}
     </nav>
 
@@ -37,9 +45,14 @@ const withBase = (path: string) =>
   <div class="mobile-nav">
     <nav class="mobile-nav-inner" aria-label="Мобильная навигация">
       {navLinks.map((item) => (
-        <a href={withBase(item.href)} class="mobile-nav-link">{item.label}</a>
+        <a
+          href={item.href.includes("#") ? item.href : withBase(item.href)}
+          class="mobile-nav-link"
+        >
+          {item.label}
+        </a>
       ))}
-      <a href={withBase("/contacts")} class="mobile-nav-link mobile-nav-link-accent">Оставить заявку</a>
+      <a href={contactsHref} class="mobile-nav-link mobile-nav-link-accent">Оставить заявку</a>
     </nav>
   </div>
 </header>
@@ -55,36 +68,44 @@ const withBase = (path: string) =>
   mobileLinks.forEach((link) => link.addEventListener("click", closeMenu));
   window.addEventListener("scroll", closeMenu, { passive: true });
 
-  const root = document.documentElement;
-  const revealEls = Array.from(document.querySelectorAll(".reveal"));
-  if (!prefersReducedMotion.matches) {
-    root.classList.add("reveal-ready");
-    const scrollRoot = document.querySelector(".snap-shell");
-    const getRootHeight = () =>
-      scrollRoot instanceof HTMLElement ? scrollRoot.clientHeight : window.innerHeight;
-    const isInRevealViewport = (el) => {
-      const rect = el.getBoundingClientRect();
-      const viewportHeight = getRootHeight();
-      return rect.bottom > 0 && rect.top < viewportHeight * 0.95;
-    };
-    revealEls.forEach((el) => {
-      if (!isInRevealViewport(el)) return;
-      el.classList.add("is-visible");
-    });
-    const revealObserver = new IntersectionObserver(
-      (entries, observer) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add("is-visible");
-          observer.unobserve(entry.target);
-        });
-      },
-      { threshold: 0.12, root: scrollRoot instanceof Element ? scrollRoot : null }
-    );
-    revealEls
-      .filter((el) => !el.classList.contains("is-visible"))
-      .forEach((el) => revealObserver.observe(el));
+  const initReveals = () => {
+    const root = document.documentElement;
+    const revealEls = Array.from(document.querySelectorAll(".reveal"));
+    if (!prefersReducedMotion.matches) {
+      root.classList.add("reveal-ready");
+      const scrollRoot = document.querySelector(".snap-shell");
+      const getRootHeight = () =>
+        scrollRoot instanceof HTMLElement ? scrollRoot.clientHeight : window.innerHeight;
+      const isInRevealViewport = (el) => {
+        const rect = el.getBoundingClientRect();
+        const viewportHeight = getRootHeight();
+        return rect.bottom > 0 && rect.top < viewportHeight * 0.95;
+      };
+      revealEls.forEach((el) => {
+        if (!isInRevealViewport(el)) return;
+        el.classList.add("is-visible");
+      });
+      const revealObserver = new IntersectionObserver(
+        (entries, observer) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          });
+        },
+        { threshold: 0.12, root: scrollRoot instanceof Element ? scrollRoot : null }
+      );
+      revealEls
+        .filter((el) => !el.classList.contains("is-visible"))
+        .forEach((el) => revealObserver.observe(el));
+    } else {
+      revealEls.forEach((el) => el.classList.add("is-visible"));
+    }
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initReveals, { once: true });
   } else {
-    revealEls.forEach((el) => el.classList.add("is-visible"));
+    initReveals();
   }
 </script>

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import InnerPageHeader from "../../components/InnerPageHeader.astro";
+import { homeContactsHref } from "../../utils/sitePaths";
 import { deviceSections } from "../../data/categories";
 import { getProductsByCategory, loadAllProducts, type Product } from "../../data/products";
 import ImageLightboxIsland from "../../components/ImageLightboxIsland.jsx";
@@ -9,6 +10,7 @@ import { Image } from "astro:assets";
 const base = import.meta.env.BASE_URL;
 const withBase = (path: string) =>
   `${base.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
+const contactsHref = homeContactsHref();
 const resolveImageHref = (href?: string | null) => {
   if (!href) return "";
   if (/^(?:https?:)?\/\//.test(href) || href.startsWith("data:") || href.startsWith("blob:")) {
@@ -205,7 +207,7 @@ const lineContent = lineContentMap[String(categoryId)] ?? {
               <a href={withBase("/company")} class="btn btn-secondary">
                 О компании
               </a>
-              <a href={withBase("/contacts")} class="btn btn-primary" data-track-event="line_discuss_project">
+              <a href={contactsHref} class="btn btn-primary" data-track-event="line_discuss_project">
                 Обсудить проект
               </a>
             </div>
@@ -303,7 +305,7 @@ const lineContent = lineContentMap[String(categoryId)] ?? {
 
                     <a
                       class="btn btn-ghost btn-pdf"
-                      href={withBase("/contacts")}
+                      href={contactsHref}
                       aria-label="Перейти к контактам"
                       data-track-event="line_to_contacts"
                     >
