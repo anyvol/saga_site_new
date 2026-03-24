@@ -9,13 +9,15 @@ const base = import.meta.env.BASE_URL;
 const withBase = (path: string) =>
   `${base.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
 const links = [
-  { label: "Решения", href: "/solutions" },
-  { label: "Оборудование", href: "/equipment" },
-  { label: "Поддержка", href: "/support" },
-  { label: "Новости", href: "/news" },
-  { label: "Пресса", href: "/press" },
-  { label: "Карьера", href: "/careers" },
-  { label: "ИТ-деятельность", href: "/it-activity" },
+  { label: "Решения", href: "/solutions", external: false },
+  { label: "Оборудование", href: "/equipment", external: false },
+  { label: "Поддержка", href: "/support", external: false },
+  { label: "Новости", href: "/news", external: false },
+  {
+    label: "Карьера",
+    href: "https://hh.ru/employer/3289751?hhtmFrom=vacancy",
+    external: true,
+  },
 ];
 ---
 
@@ -24,7 +26,14 @@ const links = [
     <span class="site-footer-left">АО «САГА Технологии», 2026</span>
     <nav class="site-footer-links" aria-label="Разделы сайта">
       {links.map((link) => (
-        <a href={withBase(link.href)} class="site-footer-link">{link.label}</a>
+        <a
+          href={link.external ? link.href : withBase(link.href)}
+          class="site-footer-link"
+          target={link.external ? "_blank" : undefined}
+          rel={link.external ? "noopener noreferrer" : undefined}
+        >
+          {link.label}
+        </a>
       ))}
     </nav>
     <span class="site-footer-right">Версия сайта: {version}</span>

@@ -63,6 +63,24 @@ const withBase = (path: string) =>
     </div>
     <SiteFooter isVisible={footerVisible} version={footerVersion} />
     <script is:inline>
+      // #region agent log
+      const agentDebugLog = (payload) => {
+        const body = JSON.stringify({
+          sessionId: "5be6ec",
+          runId: "initial-debug",
+          ...payload,
+          timestamp: Date.now(),
+        });
+        fetch("http://127.0.0.1:7461/ingest/d1e0618f-7818-42c4-93f3-82f1b4d0e539", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "5be6ec" },
+          body,
+        }).catch(() => {});
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon("http://127.0.0.1:7461/ingest/d1e0618f-7818-42c4-93f3-82f1b4d0e539", body);
+        }
+      };
+      // #endregion
       window.dataLayer = window.dataLayer || [];
       window.sagaTrack = (eventName, payload = {}) => {
         window.dataLayer.push({
@@ -86,6 +104,41 @@ const withBase = (path: string) =>
       const initStickyCtaVisibility = () => {
         const stickyCta = document.querySelector(".mobile-sticky-cta");
         const footer = document.getElementById("site-footer");
+        // #region agent log
+        const slotFirstElement = document.body.firstElementChild;
+        agentDebugLog({
+          hypothesisId: "H1",
+          location: "BaseLayout.astro:script:slotMount",
+          message: "Layout slot mount snapshot",
+          data: {
+            path: window.location.pathname,
+            bodyChildCount: document.body.childElementCount,
+            firstTag: slotFirstElement?.tagName ?? null,
+            hasMain: !!document.querySelector("main"),
+            mainClass: document.querySelector("main")?.className ?? null,
+          },
+        });
+        // #endregion
+        // #region agent log
+        const snapShell = document.querySelector(".snap-shell");
+        const firstReveal = document.querySelector(".reveal");
+        const firstRevealOpacity = firstReveal ? getComputedStyle(firstReveal).opacity : null;
+        agentDebugLog({
+          hypothesisId: "H4",
+          location: "BaseLayout.astro:script:initStickyCtaVisibility",
+          message: "Layout runtime visibility snapshot",
+          data: {
+            path: window.location.pathname,
+            hasSnapShell: !!snapShell,
+            snapShellHeight: snapShell ? getComputedStyle(snapShell).height : null,
+            snapShellOverflowY: snapShell ? getComputedStyle(snapShell).overflowY : null,
+            hasFirstReveal: !!firstReveal,
+            firstRevealOpacity,
+            hasStickyCta: !!stickyCta,
+            hasFooter: !!footer,
+          },
+        });
+        // #endregion
         if (!stickyCta || !footer) return;
 
         const updateStickyVisibility = (isFooterVisible) => {

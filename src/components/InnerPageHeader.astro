@@ -45,9 +45,41 @@ const withBase = (path: string) =>
 </header>
 
 <script is:inline>
+  // #region agent log
+  const agentDebugLog = (payload) => {
+    const body = JSON.stringify({
+      sessionId: "5be6ec",
+      runId: "initial-debug",
+      ...payload,
+      timestamp: Date.now(),
+    });
+    fetch("http://127.0.0.1:7461/ingest/d1e0618f-7818-42c4-93f3-82f1b4d0e539", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "5be6ec" },
+      body,
+    }).catch(() => {});
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon("http://127.0.0.1:7461/ingest/d1e0618f-7818-42c4-93f3-82f1b4d0e539", body);
+    }
+  };
+  // #endregion
+
   const header = document.querySelector(".site-header");
   const menuToggle = document.querySelector(".menu-toggle");
   const mobileLinks = Array.from(document.querySelectorAll(".mobile-nav-link"));
+  // #region agent log
+  agentDebugLog({
+    hypothesisId: "H1",
+    location: "InnerPageHeader.astro:script:init",
+    message: "Header script initialized",
+    data: {
+      hasHeader: !!header,
+      hasMenuToggle: !!menuToggle,
+      mobileLinksCount: mobileLinks.length,
+      path: window.location.pathname,
+    },
+  });
+  // #endregion
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   const closeMenu = () => header?.classList.remove("is-open");
@@ -57,6 +89,35 @@ const withBase = (path: string) =>
 
   const root = document.documentElement;
   const revealEls = Array.from(document.querySelectorAll(".reveal"));
+  const revealScrollRoot = document.querySelector(".snap-shell");
+  // #region agent log
+  agentDebugLog({
+    hypothesisId: "H2",
+    location: "InnerPageHeader.astro:script:revealState",
+    message: "Reveal elements discovered",
+    data: {
+      revealCount: revealEls.length,
+      reducedMotion: prefersReducedMotion.matches,
+      hasRevealReadyClass: root.classList.contains("reveal-ready"),
+      hasRevealScrollRoot: !!revealScrollRoot,
+      revealScrollRootClass: revealScrollRoot?.className ?? null,
+      sampleClasses: revealEls.slice(0, 3).map((el) => el.className),
+    },
+  });
+  // #endregion
+  // #region agent log
+  agentDebugLog({
+    hypothesisId: "H5",
+    location: "InnerPageHeader.astro:script:preRevealComputedStyles",
+    message: "Initial reveal computed styles sample",
+    data: {
+      sampleRevealOpacity: revealEls[0] ? getComputedStyle(revealEls[0]).opacity : null,
+      sampleRevealTransform: revealEls[0] ? getComputedStyle(revealEls[0]).transform : null,
+      rootClassList: root.className,
+      path: window.location.pathname,
+    },
+  });
+  // #endregion
   if (!prefersReducedMotion.matches) {
     root.classList.add("reveal-ready");
     const revealObserver = new IntersectionObserver(
@@ -64,10 +125,22 @@ const withBase = (path: string) =>
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
           entry.target.classList.add("is-visible");
+          // #region agent log
+          agentDebugLog({
+            hypothesisId: "H3",
+            location: "InnerPageHeader.astro:script:observer",
+            message: "Reveal observer marked element visible",
+            data: {
+              className: entry.target.className,
+              top: entry.boundingClientRect.top,
+              path: window.location.pathname,
+            },
+          });
+          // #endregion
           observer.unobserve(entry.target);
         });
       },
-      { threshold: 0.12 }
+      { threshold: 0.12, root: revealScrollRoot instanceof Element ? revealScrollRoot : null }
     );
     revealEls.forEach((el) => revealObserver.observe(el));
   } else {
