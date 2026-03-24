@@ -26,6 +26,8 @@ const resolveHref = (href: string) => {
   if (href.startsWith("/")) return withBase(href);
   return href;
 };
+
+const opensLeadModal = (href: string) => href.includes("#contacts");
 ---
 
 <section class="screen hero-screen inner-hero-screen">
@@ -41,6 +43,7 @@ const resolveHref = (href: string) => {
             href={resolveHref(action.href)}
             class="btn btn-hero btn-secondary"
             data-track-event={action.trackEvent}
+            {...(opensLeadModal(action.href) ? { "data-open-lead-modal": true } : {})}
           >
             {action.label}
           </a>

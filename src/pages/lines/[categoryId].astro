@@ -207,7 +207,12 @@ const lineContent = lineContentMap[String(categoryId)] ?? {
               <a href={withBase("/company")} class="btn btn-secondary">
                 О компании
               </a>
-              <a href={contactsHref} class="btn btn-primary" data-track-event="line_discuss_project">
+              <a
+                href={contactsHref}
+                class="btn btn-primary"
+                data-open-lead-modal
+                data-track-event="line_discuss_project"
+              >
                 Обсудить проект
               </a>
             </div>
@@ -306,6 +311,7 @@ const lineContent = lineContentMap[String(categoryId)] ?? {
                     <a
                       class="btn btn-ghost btn-pdf"
                       href={contactsHref}
+                      data-open-lead-modal
                       aria-label="Перейти к контактам"
                       data-track-event="line_to_contacts"
                     >

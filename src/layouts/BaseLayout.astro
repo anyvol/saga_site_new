@@ -1,7 +1,8 @@
 ---
 import "../styles/global.css";
 import SiteFooter from "../components/SiteFooter.astro";
-import { homeContactsHref } from "../utils/sitePaths";
+import LeadModalIsland from "../components/LeadModalIsland.jsx";
+import { homeContactsHref, personalDataHref } from "../utils/sitePaths";
 
 interface Props {
   title?: string;
@@ -15,7 +16,7 @@ const {
   title = "SAGA — Российские решения самообслуживания",
   description = "АО «САГА Технологии» — банкоматы, кассы самообслуживания и системы управления очередью.",
   footerVisible = false,
-  footerVersion = "0.51",
+  footerVersion = "0.6",
   canonicalPath = Astro.url.pathname
 } = Astro.props;
 
@@ -25,6 +26,8 @@ const favicon = `${import.meta.env.BASE_URL.replace(/\/+$/, "")}/assets/logos/sa
 const withBase = (path: string) =>
   `${import.meta.env.BASE_URL.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
 const contactsOnHome = homeContactsHref();
+const personalDataPageHref = personalDataHref();
+const recaptchaSiteKey = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY ?? "";
 ---
 
 <!doctype html>
@@ -47,17 +50,23 @@ const contactsOnHome = homeContactsHref();
   </head>
   <body>
     <slot />
+    <LeadModalIsland
+      client:load
+      personalDataHref={personalDataPageHref}
+      recaptchaSiteKey={recaptchaSiteKey}
+    />
     <div class="mobile-sticky-cta" aria-label="Быстрые действия">
       <a
         href="tel:+78002222197"
-        class="btn btn-primary"
+        class="btn btn-call"
         data-track-event="mobile_call"
       >
         Позвонить
       </a>
       <a
         href={contactsOnHome}
-        class="btn btn-secondary"
+        class="btn mobile-sticky-btn-lead"
+        data-open-lead-modal
         data-track-event="mobile_lead"
       >
         Оставить заявку
@@ -77,6 +86,11 @@ const contactsOnHome = homeContactsHref();
 
       document.addEventListener("click", (event) => {
         const target = event.target instanceof Element ? event.target : null;
+        const leadNode = target?.closest("[data-open-lead-modal]");
+        if (leadNode) {
+          event.preventDefault();
+          window.dispatchEvent(new CustomEvent("saga:open-lead-modal"));
+        }
         const trackNode = target?.closest("[data-track-event]");
         if (!trackNode) return;
         const eventName = trackNode.getAttribute("data-track-event");

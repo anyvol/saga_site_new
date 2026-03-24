@@ -125,7 +125,7 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
         {navItems.map((item) => (
           <a href={item.href} class="mobile-nav-link">{item.label}</a>
         ))}
-        <a href="#contacts" class="mobile-nav-link mobile-nav-link-accent">Связаться</a>
+        <a href="#contacts" class="mobile-nav-link mobile-nav-link-accent" data-open-lead-modal>Связаться</a>
       </nav>
     </div>
   </header>
@@ -169,7 +169,12 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
           <a href={withBase("/company")} class="btn btn-secondary btn-hero" data-track-event="hero_about">
             О компании
           </a>
-          <a href="#contacts" class="btn btn-secondary btn-hero" data-track-event="hero_discuss_project">
+          <a
+            href="#contacts"
+            class="btn btn-secondary btn-hero"
+            data-open-lead-modal
+            data-track-event="hero_discuss_project"
+          >
             Обсудить проект
           </a>
           <a href="#atm" class="btn btn-secondary btn-hero" data-track-event="hero_open_catalog">
@@ -279,6 +284,7 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
                         <a
                           class="btn btn-ghost btn-pdf"
                           href="#contacts"
+                          data-open-lead-modal
                           aria-label="Перейти к контактам"
                         >
                           <img
@@ -393,7 +399,7 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
           </p>
 
           <div class="hero-actions">
-            <a href="#contacts" class="btn btn-primary">Связаться с нами</a>
+            <a href="#contacts" class="btn btn-primary" data-open-lead-modal>Связаться с нами</a>
           </div>
         </div>
 

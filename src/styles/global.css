@@ -20,6 +20,9 @@
   --radius-sm: 14px;
   --container: 1280px;
   --header-h: 76px;
+  --call-accent: #1a4a38;
+  --call-bg: #e4f2eb;
+  --call-border: rgba(26, 74, 56, 0.22);
 }
 
 *,
@@ -475,6 +478,33 @@ h3 {
 .btn-ghost:hover {
   transform: translateY(-2px);
   border-color: rgba(15, 17, 21, 0.24);
+}
+
+.btn-call {
+  background: var(--call-bg);
+  color: var(--call-accent);
+  border: 1px solid var(--call-border);
+  box-shadow: 0 10px 28px rgba(26, 74, 56, 0.12);
+}
+
+.btn-call:hover {
+  background: #d7ebdf;
+  border-color: rgba(26, 74, 56, 0.32);
+  color: #14362a;
+}
+
+.btn-lead-submit {
+  color: var(--call-accent);
+}
+
+.btn-lead-submit:hover {
+  color: #14362a;
+}
+
+.btn-lead-submit:disabled {
+  opacity: 0.55;
+  transform: none;
+  cursor: not-allowed;
 }
 
 .btn-pdf {
@@ -938,6 +968,189 @@ h3 {
   outline-offset: 1px;
 }
 
+.lead-modal::backdrop {
+  background: rgba(15, 17, 21, 0.42);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.lead-modal {
+  margin: auto;
+  padding: 0;
+  border: none;
+  max-width: min(520px, calc(100vw - 24px));
+  width: 100%;
+  background: transparent;
+  color: var(--text);
+}
+
+.lead-modal:focus {
+  outline: none;
+}
+
+.lead-modal-panel {
+  position: relative;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(105, 124, 150, 0.22);
+  background: rgba(249, 250, 252, 0.98);
+  box-shadow: var(--shadow-strong);
+  padding: 26px 22px 22px;
+  max-height: min(90vh, 720px);
+  overflow: auto;
+}
+
+.lead-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(15, 17, 21, 0.06);
+  color: var(--text);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.lead-modal-close:hover {
+  background: rgba(15, 17, 21, 0.1);
+  transform: translateY(-1px);
+}
+
+.lead-modal-title {
+  margin: 0 36px 8px 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.lead-modal-lead {
+  margin: 0 0 18px;
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.lead-modal-form {
+  margin-top: 4px;
+}
+
+/* Не наследовать 14px от .lead-form label — иначе select и поля мелкие; 16px = норма для смартфонов и без лишнего zoom в iOS */
+.lead-modal-form.lead-form input,
+.lead-modal-form.lead-form select,
+.lead-modal-form.lead-form textarea {
+  font-family: "Fira Sans", ui-sans-serif, system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.lead-modal-pane.is-hidden {
+  display: none !important;
+}
+
+.lead-modal-success {
+  text-align: center;
+  padding: 8px 0 4px;
+}
+
+.lead-modal-success .lead-modal-title {
+  margin-right: 0;
+}
+
+.lead-modal-success-text {
+  margin: 0 0 22px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.lead-modal-actions {
+  margin-top: 6px;
+  display: flex;
+  justify-content: center;
+}
+
+.lead-field-error {
+  font-size: 13px;
+  color: #b42318;
+  margin-top: 4px;
+}
+
+.lead-field-error-contact {
+  margin: -4px 0 4px;
+}
+
+.lead-field-error-block {
+  display: block;
+  margin-top: -6px;
+}
+
+.lead-optional {
+  font-weight: 400;
+  color: rgba(93, 100, 112, 0.85);
+  font-size: 13px;
+}
+
+/* Специфичнее .lead-form label { display: grid }, иначе чекбокс уезжает над текстом */
+.lead-form label.lead-form-consent {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.lead-form label.lead-form-consent input[type="checkbox"] {
+  width: auto;
+  min-height: auto;
+  margin-top: 3px;
+  flex-shrink: 0;
+  accent-color: var(--call-accent);
+}
+
+.lead-form label.lead-form-consent a {
+  color: var(--call-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.lead-form label.lead-form-consent a:hover {
+  color: #14362a;
+}
+
+.lead-recaptcha-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.legal-screen .legal-doc {
+  max-width: 760px;
+}
+
+.legal-doc-body {
+  display: grid;
+  gap: 16px;
+  margin-top: 18px;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.legal-doc-body p {
+  margin: 0;
+}
+
 .contact-screen {
   align-items: center;
   padding-top: 40px;
@@ -946,9 +1159,10 @@ h3 {
 
 .mobile-sticky-cta {
   position: fixed;
-  left: 12px;
-  right: 12px;
-  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  left: 16px;
+  right: 16px;
+  /* +10px сверх safe-area: скругление дисплея режет угол панели сильнее, чем индикатор «домой» */
+  bottom: calc(22px + env(safe-area-inset-bottom, 0px));
   z-index: 48;
   display: none;
   gap: 8px;
@@ -973,6 +1187,24 @@ h3 {
 .mobile-sticky-cta .btn {
   flex: 1 1 0;
   min-height: 44px;
+}
+
+/* Как кнопки hero: тёмный текст на «стеклянном» фоне — на светлой панели sticky читается, в отличие от btn-secondary */
+.mobile-sticky-cta .mobile-sticky-btn-lead {
+  border: 1px solid rgba(96, 115, 141, 0.28);
+  background: rgba(255, 255, 255, 0.72);
+  color: #3d4b60;
+  box-shadow:
+    0 12px 28px rgba(32, 50, 73, 0.14),
+    0 1px 0 rgba(255, 255, 255, 0.6) inset;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.mobile-sticky-cta .mobile-sticky-btn-lead:hover {
+  border-color: rgba(83, 103, 132, 0.46);
+  background: rgba(255, 255, 255, 0.86);
+  color: #2f3a4e;
 }
 
 .contact-card {
@@ -1789,6 +2021,44 @@ h3 {
     grid-template-columns: 1fr;
   }
 
+  .lead-modal-panel {
+    padding: 22px 16px 18px;
+  }
+
+  .lead-modal-form.lead-form input,
+  .lead-modal-form.lead-form textarea {
+    min-height: 48px;
+    padding: 14px 16px;
+  }
+
+  .lead-modal-form.lead-form textarea {
+    min-height: 104px;
+  }
+
+  /* Нативный select: iOS/Android открывают системный picker с нормальным кеглем, без кастомной стрелки */
+  .lead-modal-form.lead-form select {
+    min-height: 48px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    -webkit-appearance: menulist;
+    appearance: auto;
+    background-color: rgba(255, 255, 255, 0.96);
+    background-image: none;
+  }
+
+  .lead-modal-form.lead-form label.lead-form-consent {
+    gap: 8px;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .lead-modal-form.lead-form label.lead-form-consent input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    min-height: 0;
+    margin-top: 2px;
+  }
+
   .hero-title {
     max-width: 11ch;
   }
@@ -1974,9 +2244,9 @@ h3 {
   }
 
   .mobile-sticky-cta {
-    left: 8px;
-    right: 8px;
-    bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    left: 14px;
+    right: 14px;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
   }
 
   .product-carousel {
