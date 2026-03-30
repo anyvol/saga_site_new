@@ -324,12 +324,13 @@ select {
 }
 
 .hero-video {
+  --hero-object-x: 64%;
   width: auto;
   height: 100%;
   object-fit: cover;
-  object-position: 64% center;
+  object-position: var(--hero-object-x) center;
   transform: scale(0.8);
-  filter: saturate(0.72) contrast(0.84) brightness(1.08);
+  filter: saturate(0.94) contrast(1) brightness(0.96);
 }
 
 .hero-overlay {
@@ -2024,18 +2025,19 @@ h3 {
   }
 
   .hero-video {
-    object-position: 60% center;
+    --hero-object-x: 14%;
+    transform: scale(1);
   }
 
   .hero-overlay {
     background:
       linear-gradient(
         120deg,
-        rgba(248, 250, 252, 0.96) 0%,
-        rgba(246, 249, 252, 0.92) 48%,
-        rgba(238, 243, 249, 0.78) 100%
+        rgba(248, 250, 252, 0.84) 0%,
+        rgba(246, 249, 252, 0.78) 48%,
+        rgba(238, 243, 249, 0.6) 100%
       ),
-      radial-gradient(circle at 78% 20%, rgba(255, 255, 255, 0.52), transparent 44%);
+      radial-gradient(circle at 78% 20%, rgba(255, 255, 255, 0.34), transparent 44%);
   }
 
   .products-grid,
@@ -2315,6 +2317,8 @@ h3 {
   }
 
   .hero-video {
-    transform: none;
+    --hero-object-x: 60%;
+    animation: none !important;
+    transform: scale(1);
   }
 }

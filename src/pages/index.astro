@@ -509,6 +509,9 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
     const navLinks = Array.from(document.querySelectorAll('a[href^="#"]'));
     const revealEls = Array.from(document.querySelectorAll(".reveal"));
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const heroSection = document.getElementById("hero");
+    const heroVideo = document.querySelector(".hero-video");
+    const snapShell = document.getElementById("snap-shell");
 
     const setActiveSection = (id) => {
       dots.forEach((dot) => {
@@ -551,6 +554,94 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
 
     sectionNodes.forEach((section) => sectionObserver.observe(section));
 
+    const initMobileHeroMotion = () => {
+      if (!heroSection || !(heroVideo instanceof HTMLElement)) return;
+
+      const mobileQuery = window.matchMedia("(max-width: 860px)");
+      const panStart = 14;
+      const panEnd = 86;
+      const touchProgressFactor = 240;
+      let heroPanProgress = 0;
+      let rafId = 0;
+      let touchStartY = 0;
+
+      const clamp01 = (value) => Math.min(1, Math.max(0, value));
+      const setPanFromProgress = () => {
+        const objectX = panStart + (panEnd - panStart) * heroPanProgress;
+        heroVideo.style.setProperty("--hero-object-x", `${objectX.toFixed(2)}%`);
+      };
+
+      const canLockScrollOnHero = () => {
+        if (prefersReducedMotion.matches || !mobileQuery.matches) return false;
+        if (heroPanProgress >= 1) return false;
+        const heroRect = heroSection.getBoundingClientRect();
+        return heroRect.top <= 88 && heroRect.bottom > window.innerHeight * 0.45;
+      };
+
+      const consumeDownwardScroll = (deltaY) => {
+        if (deltaY <= 0 || !canLockScrollOnHero()) return false;
+        heroPanProgress = clamp01(heroPanProgress + deltaY / touchProgressFactor);
+        setPanFromProgress();
+        return true;
+      };
+
+      const updateHeroPan = () => {
+        rafId = 0;
+
+        if (prefersReducedMotion.matches || !mobileQuery.matches) {
+          heroPanProgress = 1;
+          setPanFromProgress();
+          return;
+        }
+        setPanFromProgress();
+      };
+
+      const scheduleHeroPanUpdate = () => {
+        if (rafId) return;
+        rafId = window.requestAnimationFrame(updateHeroPan);
+      };
+
+      scheduleHeroPanUpdate();
+      window.addEventListener("scroll", scheduleHeroPanUpdate, { passive: true });
+      window.addEventListener("resize", scheduleHeroPanUpdate);
+      snapShell?.addEventListener("scroll", scheduleHeroPanUpdate, { passive: true });
+      mobileQuery.addEventListener("change", scheduleHeroPanUpdate);
+      prefersReducedMotion.addEventListener("change", scheduleHeroPanUpdate);
+
+      window.addEventListener(
+        "wheel",
+        (event) => {
+          if (consumeDownwardScroll(event.deltaY)) {
+            event.preventDefault();
+          }
+        },
+        { passive: false }
+      );
+
+      window.addEventListener(
+        "touchstart",
+        (event) => {
+          touchStartY = event.touches[0]?.clientY ?? 0;
+        },
+        { passive: true }
+      );
+
+      window.addEventListener(
+        "touchmove",
+        (event) => {
+          const currentY = event.touches[0]?.clientY ?? touchStartY;
+          const deltaY = touchStartY - currentY;
+          touchStartY = currentY;
+          if (consumeDownwardScroll(deltaY)) {
+            event.preventDefault();
+          }
+        },
+        { passive: false }
+      );
+    };
+
+    initMobileHeroMotion();
+
     // Десктоп: футер только когда доскроллил до конца (контакты)
     const initFooterVisibility = () => {
       const footer = document.getElementById("site-footer");
@@ -592,7 +683,6 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
       });
     }
 
-    const snapShell = document.getElementById("snap-shell");
     snapShell?.addEventListener("scroll", closeMenuOnMove, { passive: true });
     window.addEventListener("scroll", closeMenuOnMove, { passive: true });
     window.addEventListener("touchmove", closeMenuOnMove, { passive: true });
