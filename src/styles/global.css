@@ -23,6 +23,7 @@
   --call-accent: #1a4a38;
   --call-bg: #e4f2eb;
   --call-border: rgba(26, 74, 56, 0.22);
+  --desktop-footer-h: 72px;
 }
 
 *,
@@ -532,6 +533,12 @@ h3 {
 .final-sticky-screen {
   min-height: auto;
   padding: calc(var(--header-h) + 12px) 0 34px;
+}
+
+@media (min-width: 861px) {
+  .final-sticky-screen {
+    padding-bottom: calc(34px + var(--desktop-footer-h));
+  }
 }
 
 .final-sticky-cta {
