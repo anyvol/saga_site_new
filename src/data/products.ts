@@ -1,108 +1,31 @@
 export type ProductImageKind = "front" | "angle" | "detail" | "context";
 
 export type ProductImage = {
-  /**
-   * Путь к изображению относительно корня public,
-   * например: "/assets/products/adm/saga-s8/saga_s8_1.jpg".
-   *
-   * В JSON можно указывать как полный путь, так и только имя файла —
-   * в этом случае путь будет собран по схеме:
-   *   /assets/products/{categoryId}/{productId}/{fileName}
-   *
-   * Для картинок, перенесённых в src/assets и подключённых через astro:assets,
-   * это поле продолжает использоваться как fallback для <img>, если optimized
-   * недоступен.
-   */
+  /** Путь к изображению: полный от корня public или имя файла (будет собран автоматически). */
   src: string;
   alt: string;
   kind: ProductImageKind;
-  /**
-   * Опциональный флаг для основной картинки,
-   * которая используется в карточке на главной.
-   */
   isPrimary?: boolean;
-  /**
-   * Опциональное оптимизированное изображение из astro:assets.
-   * Присутствует, если для данного продукта найден файл в src/assets/products.
-   */
-  // Тип берём как any, чтобы не тянуть внутренние типы astro:assets
+  /** Оптимизированное изображение из astro:assets (если найден файл в src/assets/products). */
   optimized?: any;
 };
 
 export type ProductSpecs = Record<string, string | number | (string | number)[]>;
 
 export interface Product {
-  /**
-   * Уникальный идентификатор продукта.
-   * Используется в URL: /products/[id]
-   */
   id: string;
-
-  /**
-   * Идентификатор категории (atm, adm, qms, ssc, info, charging и т.п.).
-   * Используется для привязки к секции каталога.
-   */
   categoryId: string;
-
-  /**
-   * Порядок сортировки внутри категории.
-   */
   order: number;
-
-  /**
-   * Краткое название продукта, используется в карточке и на детальной.
-   */
   title: string;
-
-  /**
-   * Краткая подпись/конфигурация (экран, ориентация и т.п.).
-   */
   subtitle: string;
-
-  /**
-   * Вводный текст для карточки (аналог текущего text у слайда).
-   */
   intro: string;
-
-  /**
-   * Основные буллеты, которые сейчас показываются в списке.
-   */
   bullets: string[];
-
-  /**
-   * Раскрывающиеся подробности (аналог массива details).
-   */
   details: string[];
-
-  /**
-   * Опциональная ссылка на PDF-буклет для категории/продукта.
-   */
   sectionBooklet?: string | null;
-
-  /**
-   * Галерея изображений продукта (несколько ракурсов, детали и т.п.).
-   */
   images: ProductImage[];
-
-  /**
-   * Более длинное описание для детальной страницы (опционально).
-   */
   longDescription?: string;
-
-  /**
-   * Структура под характеристики (tab "Характеристики" на детальной странице).
-   * В MVP может быть частично заполнена или пустой.
-   */
   specs?: ProductSpecs;
-
-  /**
-   * Опциональный бейдж для карточки: "Новый", "Флагман" и т.п.
-   */
   badge?: string;
-
-  /**
-   * Дополнительный тег/лейбл, если потребуется.
-   */
   tag?: string;
 }
 
@@ -279,7 +202,7 @@ const normalizeProduct = (input: {
 
 let cachedProducts: Product[] | null = null;
 
-// Loading all products from src/content/products/**/product.json at build/SSR using import.meta.glob (eager)
+// Загрузка product.json из content через import.meta.glob (eager, build-time)
 export const loadAllProducts = (): Product[] => {
   if (cachedProducts) {
     return cachedProducts;

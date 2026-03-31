@@ -135,16 +135,6 @@ export default function ProductCarouselIsland({ sectionId }) {
     });
 
     let rafId = null;
-    let wheelLocked = false;
-    let scrollEndTimer = null;
-    const resetScrollEndTimer = () => {
-      if (!wheelLocked) return;
-      if (scrollEndTimer) clearTimeout(scrollEndTimer);
-      scrollEndTimer = setTimeout(() => {
-        wheelLocked = false;
-        scrollEndTimer = null;
-      }, 500);
-    };
     let snapTimer = null;
     let touchStartX = 0;
     let touchStartY = 0;
@@ -167,46 +157,8 @@ export default function ProductCarouselIsland({ sectionId }) {
         }, 140);
       }
 
-      resetScrollEndTimer();
     };
     carousel.addEventListener("scroll", onScroll, { passive: true });
-
-    let lastGoToTime = 0;
-    const setScrollEndLock = () => {
-      wheelLocked = true;
-      resetScrollEndTimer();
-    };
-    const onWheel = (e) => {
-      if (window.innerWidth <= 860) return;
-      if (!wrap.contains(e.target)) return;
-      if (Math.abs(e.deltaX) < Math.abs(e.deltaY)) return;
-      const deltaH = e.deltaX;
-      if (deltaH === 0) return;
-      if (carousel.scrollWidth <= carousel.clientWidth) return;
-
-      const atStart = carousel.scrollLeft <= 0;
-      const atEnd =
-        Math.ceil(carousel.scrollLeft + carousel.clientWidth) >=
-        carousel.scrollWidth;
-
-      if ((atStart && deltaH < 0) || (atEnd && deltaH > 0)) return;
-
-      e.preventDefault();
-      e.stopPropagation();
-      if (wheelLocked) return;
-      if (Date.now() - lastGoToTime < 500) return;
-      const idx = getActiveIndex();
-      const nextIdx = deltaH > 0 ? idx + 1 : idx - 1;
-      if (nextIdx >= 0 && nextIdx < slides.length) {
-        goTo(nextIdx);
-        lastGoToTime = Date.now();
-        setScrollEndLock();
-      }
-    };
-    carousel.addEventListener("wheel", onWheel, {
-      passive: false,
-      capture: true,
-    });
 
     const onTouchStart = (e) => {
       if (isDesktop()) return;
@@ -282,7 +234,6 @@ export default function ProductCarouselIsland({ sectionId }) {
         dot.replaceWith(dot.cloneNode(true));
       });
       carousel.removeEventListener("scroll", onScroll);
-      carousel.removeEventListener("wheel", onWheel);
       carousel.removeEventListener("touchstart", onTouchStart);
       carousel.removeEventListener("touchmove", onTouchMove);
       carousel.removeEventListener("touchend", onTouchEnd);

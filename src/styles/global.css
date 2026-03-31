@@ -1555,6 +1555,7 @@ h3 {
     grid-auto-columns: min(480px, 52%);
     padding-inline: 24px;
     scroll-padding-inline: 24px;
+    overflow-x: hidden;
   }
 
   .device-card {
@@ -2186,6 +2187,7 @@ h3 {
   .device-card-body,
   .product-body {
     overflow-y: auto;
+    overscroll-behavior-y: contain;
   }
 
   .lightbox-overlay {

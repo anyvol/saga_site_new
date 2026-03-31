@@ -160,9 +160,10 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
         </h1>
 
         <p class="hero-text reveal reveal-delay-2">
-          Полноэкранная продуктовая витрина для коллег и заказчиков: вертикальный
-          переход между типами решений и горизонтальное сравнение моделей внутри
-          каждой категории.
+          Российский производитель банкоматов, платежных терминалов, касс
+          самообслуживания, систем управления очередью и другого
+          высокотехнологичного оборудования. Полный цикл: от разработки
+          до серийного производства и сервисной поддержки.
         </p>
 
         <div class="hero-actions reveal reveal-delay-3">
@@ -352,11 +353,11 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
       <div class="container panel-grid">
         <div class="section-copy reveal">
           <div class="eyebrow">Преимущества</div>
-          <h2>Один UX-каркас для всей линейки решений.</h2>
+          <h2>Комплексный подход к решению задач заказчика.</h2>
           <p>
-            Вместо разрозненных карточек сайт теперь работает как единая продуктовая
-            система: вертикально пользователь переходит между типами оборудования,
-            а горизонтально сравнивает конкретные исполнения.
+            Стратегия компании охватывает полный цикл: от анализа требований и
+            проектирования до производства, внедрения и сервисной поддержки.
+            Более 700 моделей и модификаций оборудования для различных отраслей.
           </p>
         </div>
 
@@ -388,14 +389,15 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
           <div class="eyebrow">Компания</div>
           <h2>От идеи до производства и сервисной поддержки.</h2>
           <p>
-            АО «САГА Технологии» основано в 2006 году. Сайт теперь показывает не
-            только отдельные продукты, но и целостный производственный контур —
-            от разработки до серийного выпуска.
+            АО «САГА Технологии» основано в 2006 году. Компания является
+            производителем полного цикла и располагает собственными
+            площадками в Москве и Московской области, оснащёнными современным
+            парком станков для работы со сталью, алюминием и пластиком.
           </p>
           <p>
-            Это создаёт правильный уровень доверия уже в первые минуты просмотра:
-            виден продукт, видна вариативность линейки и видно, что за ней стоит
-            реальное производство.
+            Профессиональная команда инженеров, конструкторов, программистов
+            и технологов решает сложные и нестандартные задачи в короткие сроки,
+            что является ключевой компетенцией компании.
           </p>
 
           <div class="hero-actions">
@@ -409,10 +411,11 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
           <article class="company-media-card reveal reveal-delay-2">
             <div class="feature-media-overlay">
               <div class="feature-kicker">Производство</div>
-              <h3>Своё производство</h3>
+              <h3>Собственная производственная база</h3>
               <p>
-                Видео с производства усиливает доверие к бренду и связывает
-                продуктовую витрину с реальным производственным контуром.
+                Производственные площадки в Москве и Московской области
+                обеспечивают полный цикл изготовления оборудования —
+                от металлообработки до финальной сборки.
               </p>
             </div>
             <div class="company-media-card-media">
@@ -430,10 +433,11 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
           <article class="company-media-card reveal reveal-delay-3">
             <div class="feature-media-overlay">
               <div class="feature-kicker">Инженерия</div>
-              <h3>Системная разработка и выпуск</h3>
+              <h3>Инженерная экспертиза</h3>
               <p>
-                Такой блок помогает коллегам и партнёрам быстро считать масштаб,
-                зрелость и industrial feel компании.
+                Разработка, конструирование и испытания проводятся силами
+                собственной команды, что обеспечивает контроль качества
+                на каждом этапе.
               </p>
             </div>
             <div class="company-media-card-media">
@@ -553,6 +557,70 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
     );
 
     sectionNodes.forEach((section) => sectionObserver.observe(section));
+
+    const initDesktopWheelPaging = () => {
+      if (!snapShell || sectionNodes.length < 2) return;
+      if (window.innerWidth <= 860) return;
+
+      let wheelLock = false;
+      let wheelTimer = 0;
+      const releaseWheelLock = () => {
+        wheelLock = false;
+        wheelTimer = 0;
+      };
+
+      const getClosestSectionIndex = () => {
+        const shellTop = snapShell.getBoundingClientRect().top;
+        const shellCenter = shellTop + snapShell.clientHeight / 2;
+        let bestIndex = 0;
+        let bestDistance = Infinity;
+
+        sectionNodes.forEach((section, index) => {
+          const rect = section.getBoundingClientRect();
+          const sectionCenter = rect.top + rect.height / 2;
+          const distance = Math.abs(sectionCenter - shellCenter);
+          if (distance < bestDistance) {
+            bestDistance = distance;
+            bestIndex = index;
+          }
+        });
+
+        return bestIndex;
+      };
+
+      const onDesktopWheel = (event) => {
+        if (window.innerWidth <= 860) return;
+        if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) return;
+        if (Math.abs(event.deltaY) < 2) return;
+
+        event.preventDefault();
+        if (wheelLock) return;
+
+        const currentIndex = getClosestSectionIndex();
+        const direction = event.deltaY > 0 ? 1 : -1;
+        const targetIndex = Math.max(
+          0,
+          Math.min(sectionNodes.length - 1, currentIndex + direction)
+        );
+        if (targetIndex === currentIndex) return;
+
+        wheelLock = true;
+        if (wheelTimer) window.clearTimeout(wheelTimer);
+        wheelTimer = window.setTimeout(releaseWheelLock, 520);
+
+        sectionNodes[targetIndex].scrollIntoView({
+          behavior: prefersReducedMotion.matches ? "auto" : "smooth",
+          block: "start",
+        });
+      };
+
+      snapShell.addEventListener("wheel", onDesktopWheel, {
+        passive: false,
+        capture: true,
+      });
+    };
+
+    initDesktopWheelPaging();
 
     const initMobileHeroMotion = () => {
       if (!heroSection || !(heroVideo instanceof HTMLElement)) return;
