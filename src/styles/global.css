@@ -1009,8 +1009,8 @@ h3 {
   background: rgba(249, 250, 252, 0.98);
   box-shadow: var(--shadow-strong);
   padding: 26px 22px 22px;
-  max-height: min(90vh, 720px);
-  overflow: auto;
+  max-height: none;
+  overflow: visible;
 }
 
 .lead-modal-close {
