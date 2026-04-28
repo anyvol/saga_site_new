@@ -1565,15 +1565,18 @@ h3 {
   }
 
   .product-carousel {
-    grid-auto-columns: min(480px, 52%);
-    padding-inline: 24px;
-    scroll-padding-inline: 24px;
+    grid-auto-columns: 100%;
+    padding-inline: 0;
+    scroll-padding-inline: 0;
     overflow-x: hidden;
   }
 
   .device-card {
     max-height: none;
-    overflow: visible;
+    overflow: hidden;
+    grid-template-columns: minmax(360px, 54%) minmax(320px, 46%);
+    grid-template-rows: 1fr;
+    min-height: clamp(500px, 62svh, 680px);
   }
 
   .device-card:not(.is-active) {
@@ -1585,6 +1588,23 @@ h3 {
   .device-card.is-active {
     filter: none;
     -webkit-filter: none;
+  }
+
+  .device-card-media {
+    aspect-ratio: auto;
+    height: 100%;
+    min-height: 100%;
+    padding: 28px;
+  }
+
+  .device-card-media-trigger {
+    height: 100%;
+    padding: 28px;
+  }
+
+  .device-card-body {
+    padding: clamp(24px, 3svh, 36px);
+    gap: clamp(12px, 1.7svh, 18px);
   }
 }
 
@@ -1768,11 +1788,14 @@ h3 {
 
 .device-card-media-trigger {
   width: 100%;
-  aspect-ratio: 80 / 27; /* еще -50% по высоте от текущего состояния */
+  aspect-ratio: 4 / 3;
   border: none;
   outline: none;
   cursor: pointer;
   padding: 24px; /* переопределяем на случай дефолта для button */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .device-card-media-trigger:focus-visible {
@@ -1788,8 +1811,9 @@ h3 {
 
 .device-card-media img {
   width: auto;
-  height: 100%;
+  height: auto;
   max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
   object-position: center;
 }
@@ -1797,7 +1821,7 @@ h3 {
 .device-card-body {
   padding: 22px;
   display: grid;
-  align-content: start;
+  align-content: center;
   gap: 14px;
   min-height: 0;
 }
@@ -1843,7 +1867,7 @@ h3 {
 .device-action-row {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 12px;
   margin-top: 14px;
@@ -1855,7 +1879,7 @@ h3 {
   padding-top: 12px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .device-details summary {
@@ -1872,9 +1896,10 @@ h3 {
 .device-details summary {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   width: auto;
   flex: 0 0 auto;
+  gap: 10px;
 }
 
 .device-details-label {
@@ -2150,6 +2175,12 @@ h3 {
     padding: 12px;
   }
 
+  .device-card {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    min-height: 100%;
+  }
+
   .carousel-controls {
     width: auto;
     justify-content: flex-end;
@@ -2211,6 +2242,10 @@ h3 {
     min-height: 120px;
     max-height: clamp(140px, 30svh, 320px);
     padding: 12px 16px;
+  }
+
+  .device-card {
+    min-height: clamp(420px, 58svh, 560px);
   }
 
   .device-card-media-trigger,
@@ -2299,6 +2334,10 @@ h3 {
     min-height: 100px;
     max-height: clamp(100px, 24svh, 200px);
     padding: 8px 12px;
+  }
+
+  .device-card {
+    min-height: clamp(360px, 54svh, 480px);
   }
 
   .device-card-media-trigger,
