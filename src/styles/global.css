@@ -306,18 +306,35 @@ select {
   position: fixed;
   inset: 0 0 auto 0;
   z-index: 50;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  background: var(--header-bg);
-  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  justify-content: center;
+  padding: 12px 20px 0;
+  background: transparent;
+  border-bottom: 0;
 }
 
 .header-inner {
-  min-height: var(--header-h);
+  width: min(calc(100% - 40px), var(--container));
+  min-height: calc(var(--header-h) - 12px);
   display: grid;
   grid-template-columns: auto 1fr auto auto;
   align-items: center;
   gap: 20px;
+  padding: 0 22px;
+  border-radius: 18px;
+  border: 1px solid var(--glass-border);
+  background:
+    linear-gradient(108deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+    var(--header-bg);
+  backdrop-filter: blur(22px) saturate(145%);
+  -webkit-backdrop-filter: blur(22px) saturate(145%);
+  box-shadow:
+    0 14px 44px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.header-row {
+  display: contents;
 }
 
 .brand {
@@ -2164,18 +2181,37 @@ h3 {
   .menu-toggle {
     display: inline-flex;
     justify-self: end;
-    margin-right: -20px;
+    margin-right: 0;
   }
 
   .header-inner {
+    width: min(calc(100% - 24px), var(--container));
+    min-height: calc(var(--header-h) - 10px);
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    padding: 0 14px;
+    border-radius: 16px;
+  }
+
+  .header-row {
+    display: grid;
     grid-template-columns: auto 1fr auto;
+    align-items: center;
+    width: 100%;
+    min-height: calc(var(--header-h) - 10px);
   }
 
   .mobile-nav {
     display: block;
+    grid-column: 1;
+    width: 100%;
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.28s ease;
+  }
+
+  .site-header.is-open .header-inner {
+    padding-bottom: 10px;
   }
 
   .site-header.is-open .mobile-nav {
@@ -2183,15 +2219,18 @@ h3 {
   }
 
   .mobile-nav-inner {
-    width: min(calc(100% - 40px), var(--container));
-    margin: 0 auto 16px;
-    padding: 10px;
-    border-radius: 24px;
-    background: var(--surface-strong);
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--shadow-soft);
+    width: 100%;
+    margin: 8px auto 0;
+    padding: 8px 0 2px;
     display: grid;
     gap: 4px;
+    justify-items: center;
+  }
+
+  .mobile-nav-link {
+    width: min(100%, 260px);
+    justify-content: center;
+    text-align: center;
   }
 
   .mobile-nav-link-accent {
