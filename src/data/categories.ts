@@ -58,7 +58,7 @@ export const deviceSections: DeviceSection[] = [
         title: "SAGA ATM 19″",
         subtitle: "19-дюймовый экран",
         text: "Компактная конфигурация для размещения в условиях ограниченного пространства. Минимальная глубина установки при сохранении полного функционала.",
-        image: withBase("/assets/atms/saga_atm_19_front.jpg"),
+        image: withBase("/assets/atms/saga_atm_19_front.png"),
         bullets: [
           "Компактный форм-фактор для небольших помещений.",
           "Минимальная глубина установки.",
@@ -75,7 +75,7 @@ export const deviceSections: DeviceSection[] = [
         title: "SAGA ATM 27″",
         subtitle: "27-дюймовый экран",
         text: "Универсальная модель для массовых сценариев обслуживания. Увеличенный экран обеспечивает удобство работы с интерфейсом.",
-        image: withBase("/assets/atms/saga_atm_27_front.jpg"),
+        image: withBase("/assets/atms/saga_atm_27_front.png"),
         bullets: [
           "Универсальный формат для большинства сценариев.",
           "27-дюймовый сенсорный экран.",

@@ -1,4 +1,6 @@
 ---
+import ThemeToggleIsland from "./ThemeToggleIsland.jsx";
+
 interface Props {
   version?: string;
   isVisible?: boolean;
@@ -36,6 +38,9 @@ const links = [
         </a>
       ))}
     </nav>
-    <span class="site-footer-right">Версия сайта: {version}</span>
+    <div class="site-footer-meta">
+      <ThemeToggleIsland client:load />
+      <span class="site-footer-right">Версия сайта: {version}</span>
+    </div>
   </div>
 </footer>

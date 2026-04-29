@@ -45,7 +45,27 @@ const recaptchaSiteKey = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY ?? "";
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="theme-color" content="#0f1115" />
+    <meta name="theme-color" content="#0b0f0d" />
+    <script is:inline>
+      (() => {
+        const darkColor = "#0b0f0d";
+        const lightColor = "#f3f4f6";
+        try {
+          const savedTheme = window.localStorage.getItem("saga-theme");
+          if (savedTheme === "light" || savedTheme === "dark") {
+            document.documentElement.dataset.theme = savedTheme;
+          }
+          const activeTheme = document.documentElement.dataset.theme === "light" ? "light" : "dark";
+          document
+            .querySelector('meta[name="theme-color"]')
+            ?.setAttribute("content", activeTheme === "light" ? lightColor : darkColor);
+        } catch {
+          document
+            .querySelector('meta[name="theme-color"]')
+            ?.setAttribute("content", darkColor);
+        }
+      })();
+    </script>
     <link rel="icon" href={favicon} type="image/svg+xml" />
   </head>
   <body>
