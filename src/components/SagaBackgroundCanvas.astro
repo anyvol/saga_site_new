@@ -1,0 +1,238 @@
+<canvas class="saga-background-canvas" aria-hidden="true"></canvas>
+
+<script>
+  type RibbonConfig = {
+    lineCount: number;
+    baseX: number;
+    spread: number;
+    amplitude: number;
+    frequency: number;
+    phase: number;
+    drift: number;
+  };
+
+  type RibbonPoint = {
+    x: number;
+    y: number;
+  };
+
+  type RibbonLine = {
+    points: RibbonPoint[];
+    lineIndex: number;
+  };
+
+  const canvas = document.querySelector(".saga-background-canvas");
+
+  if (canvas instanceof HTMLCanvasElement) {
+    const ctx = canvas.getContext("2d");
+    const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const frameDelay = 50;
+    const baseHue = 169;
+    let width = 0;
+    let height = 0;
+    let virtualHeight = 0;
+    let dpr = 1;
+    let rafId = 0;
+    let lastFrame = 0;
+    let resizeTimer = 0;
+    let ribbons: RibbonLine[][] = [];
+
+    const ribbonConfig: RibbonConfig[] = [
+      { lineCount: 7, baseX: 0.18, spread: 0.11, amplitude: 0.16, frequency: 1.65, phase: 0.15, drift: 0.12 },
+      { lineCount: 8, baseX: 0.52, spread: 0.14, amplitude: 0.22, frequency: 1.35, phase: 2.4, drift: -0.1 },
+      { lineCount: 6, baseX: 0.8, spread: 0.1, amplitude: 0.18, frequency: 1.55, phase: 4.35, drift: 0.08 },
+    ];
+
+    const isDarkTheme = () => document.documentElement.dataset.theme !== "light";
+
+    const getScrollRoot = () => {
+      const snapShell = document.querySelector(".snap-shell");
+      if (snapShell instanceof HTMLElement && snapShell.scrollHeight > snapShell.clientHeight + 2) {
+        return snapShell;
+      }
+
+      return null;
+    };
+
+    const getScrollTop = () => getScrollRoot()?.scrollTop ?? window.scrollY;
+
+    const getVirtualHeight = () => {
+      const scrollRoot = getScrollRoot();
+      const documentHeight = Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight,
+        window.innerHeight
+      );
+
+      return Math.max(scrollRoot?.scrollHeight ?? 0, documentHeight, window.innerHeight);
+    };
+
+    const resizeCanvas = () => {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = window.innerWidth;
+      height = window.innerHeight;
+      virtualHeight = getVirtualHeight();
+      canvas.width = Math.max(1, Math.round(width * dpr));
+      canvas.height = Math.max(1, Math.round(height * dpr));
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx?.setTransform(dpr, 0, 0, dpr, 0, 0);
+      buildRibbons();
+    };
+
+    const getRibbonX = (y: number, config: RibbonConfig, offset: number) => {
+      const progress = y / Math.max(virtualHeight, 1);
+      const primary = Math.sin(progress * Math.PI * 2 * config.frequency + config.phase);
+      const twist = Math.sin(progress * Math.PI * 2 * (config.frequency * 2.1) - config.phase * 0.72);
+      const crossing = (progress - 0.5) * width * config.drift;
+
+      return (
+        width * config.baseX +
+        primary * width * config.amplitude +
+        twist * width * config.amplitude * 0.42 +
+        crossing +
+        offset
+      );
+    };
+
+    const buildRibbons = () => {
+      const step = Math.max(28, Math.round(virtualHeight / 180));
+      const startY = -height * 0.45;
+      const endY = virtualHeight + height * 0.45;
+
+      ribbons = ribbonConfig.map((config) => {
+        const spreadPx = Math.max(48, width * config.spread);
+        const gap = config.lineCount > 1 ? spreadPx / (config.lineCount - 1) : 0;
+        const centerOffset = -spreadPx / 2;
+
+        return Array.from({ length: config.lineCount }, (_, lineIndex) => {
+          const offset = centerOffset + gap * lineIndex;
+          const points: RibbonPoint[] = [];
+
+          for (let y = startY; y <= endY; y += step) {
+            points.push({ x: getRibbonX(y, config, offset), y });
+          }
+
+          points.push({ x: getRibbonX(endY, config, offset), y: endY });
+          return { points, lineIndex };
+        });
+      });
+    };
+
+    const drawLine = (line: RibbonLine, ribbonIndex: number, now: number, scrollTop: number) => {
+      const visiblePoints = line.points.filter(
+        (point) => point.y >= scrollTop - height * 0.35 && point.y <= scrollTop + height * 1.35
+      );
+      const firstPoint = visiblePoints[0];
+      if (!firstPoint || !ctx) return;
+
+      const colorShift = Math.sin(now * 0.00055 + ribbonIndex * 1.8 + line.lineIndex * 0.4);
+      const hue = baseHue + colorShift * 10;
+      const lightness = 13 + colorShift * 7 + ribbonIndex * 1.4;
+      const alpha = 0.24 + ribbonIndex * 0.055 + line.lineIndex * 0.014;
+      const lineWidth = 0.8 + ((ribbonIndex + line.lineIndex) % 4) * 0.1;
+
+      ctx.beginPath();
+      ctx.moveTo(firstPoint.x, firstPoint.y - scrollTop);
+      for (let index = 1; index < visiblePoints.length; index += 1) {
+        const point = visiblePoints[index];
+        ctx.lineTo(point.x, point.y - scrollTop);
+      }
+
+      ctx.lineWidth = lineWidth;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = `hsla(${hue}, 78%, ${Math.max(12, lightness + 8)}%, 0.38)`;
+      ctx.strokeStyle = `hsla(${hue}, 76%, ${Math.max(10, lightness)}%, ${alpha})`;
+      ctx.stroke();
+    };
+
+    const draw = (now: number = performance.now()) => {
+      if (!ctx) return;
+
+      const scrollTop = getScrollTop();
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "#0A1A1A";
+      ctx.fillRect(0, 0, width, height);
+      ctx.globalCompositeOperation = "lighter";
+
+      ribbons.forEach((ribbon, ribbonIndex) => {
+        ribbon.forEach((line) => drawLine(line, ribbonIndex, now, scrollTop));
+      });
+
+      ctx.globalCompositeOperation = "source-over";
+      ctx.shadowBlur = 0;
+    };
+
+    const stop = () => {
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+      ctx?.clearRect(0, 0, width, height);
+    };
+
+    const tick = (now: number) => {
+      if (!isDarkTheme()) {
+        stop();
+        return;
+      }
+
+      if (now - lastFrame >= frameDelay) {
+        draw(now);
+        lastFrame = now;
+      }
+
+      rafId = window.requestAnimationFrame(tick);
+    };
+
+    const start = () => {
+      stop();
+      if (!isDarkTheme()) return;
+
+      resizeCanvas();
+      draw();
+
+      if (!reduceMotionQuery.matches) {
+        rafId = window.requestAnimationFrame(tick);
+      }
+    };
+
+    const handleThemeChange = () => {
+      if (isDarkTheme()) {
+        start();
+      } else {
+        stop();
+      }
+    };
+
+    const scheduleRestart = () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(start, 120);
+    };
+
+    const scheduleDraw = () => {
+      if (!isDarkTheme() || rafId) return;
+      rafId = window.requestAnimationFrame((now) => {
+        rafId = 0;
+        draw(now);
+      });
+    };
+
+    const bindScrollRoot = () => {
+      const scrollRoot = getScrollRoot();
+      scrollRoot?.addEventListener("scroll", scheduleDraw, { passive: true });
+      window.addEventListener("scroll", scheduleDraw, { passive: true });
+    };
+
+    window.addEventListener("resize", () => {
+      scheduleRestart();
+    });
+    window.addEventListener("load", scheduleRestart);
+    window.addEventListener("saga:theme-change", handleThemeChange);
+    reduceMotionQuery.addEventListener("change", start);
+    bindScrollRoot();
+    start();
+  }
+</script>

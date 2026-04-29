@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 const STORAGE_KEY = "saga-theme";
-const DARK_THEME_COLOR = "#0b0f0d";
+const DARK_THEME_COLOR = "#0A1A1A";
 const LIGHT_THEME_COLOR = "#f3f4f6";
 
 const getCurrentTheme = () => {
@@ -31,6 +31,7 @@ export default function ThemeToggleIsland() {
     } catch {
       /* Theme still changes for this session if storage is unavailable. */
     }
+    window.dispatchEvent(new CustomEvent("saga:theme-change", { detail: { theme: nextTheme } }));
     window.sagaTrack?.("theme_toggle", { theme: nextTheme });
     setTheme(nextTheme);
   };
