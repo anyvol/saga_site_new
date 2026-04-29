@@ -100,33 +100,35 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
 >
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="#hero" aria-label="SAGA">
-        <img
-          src={withBase("/assets/logos/saga_logo_black.svg")}
-          alt="SAGA"
-          class="brand-logo"
-        />
-      </a>
+      <div class="header-row">
+        <a class="brand" href="#hero" aria-label="SAGA">
+          <img
+            src={withBase("/assets/logos/saga_logo_black.svg")}
+            alt="SAGA"
+            class="brand-logo"
+          />
+        </a>
 
-      <nav class="main-nav" aria-label="Основная навигация">
-        {navItems.map((item) => (
-          <a href={item.href} class="nav-link">{item.label}</a>
-        ))}
-      </nav>
+        <nav class="main-nav" aria-label="Основная навигация">
+          {navItems.map((item) => (
+            <a href={item.href} class="nav-link">{item.label}</a>
+          ))}
+        </nav>
 
-      <button class="menu-toggle" type="button" aria-label="Открыть меню">
-        <span></span>
-        <span></span>
-      </button>
-    </div>
+        <button class="menu-toggle" type="button" aria-label="Открыть меню">
+          <span></span>
+          <span></span>
+        </button>
+      </div>
 
-    <div class="mobile-nav">
-      <nav class="mobile-nav-inner" aria-label="Мобильная навигация">
-        {navItems.map((item) => (
-          <a href={item.href} class="mobile-nav-link">{item.label}</a>
-        ))}
-        <a href="#contacts" class="mobile-nav-link mobile-nav-link-accent" data-open-lead-modal>Связаться</a>
-      </nav>
+      <div class="mobile-nav">
+        <nav class="mobile-nav-inner" aria-label="Мобильная навигация">
+          {navItems.map((item) => (
+            <a href={item.href} class="mobile-nav-link">{item.label}</a>
+          ))}
+          <a href="#contacts" class="mobile-nav-link mobile-nav-link-accent" data-open-lead-modal>Связаться</a>
+        </nav>
+      </div>
     </div>
   </header>
 

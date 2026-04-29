@@ -17,45 +17,47 @@ const withBase = (path: string) =>
 
 <header class="site-header">
   <div class="container header-inner">
-    <a class="brand" href={withBase("/")} aria-label="SAGA">
-      <img
-        src={`${import.meta.env.BASE_URL.replace(/\/+$/, "")}/assets/logos/saga_logo_black.svg`}
-        alt="SAGA"
-        class="brand-logo"
-      />
-    </a>
-
-    <nav class="main-nav" aria-label="Основная навигация">
-      {navLinks.map((item) => (
-        <a
-          href={item.href.includes("#") ? item.href : withBase(item.href)}
-          class="nav-link"
-        >
-          {item.label}
-        </a>
-      ))}
-    </nav>
-
-    <button class="menu-toggle" type="button" aria-label="Открыть меню">
-      <span></span>
-      <span></span>
-    </button>
-  </div>
-
-  <div class="mobile-nav">
-    <nav class="mobile-nav-inner" aria-label="Мобильная навигация">
-      {navLinks.map((item) => (
-        <a
-          href={item.href.includes("#") ? item.href : withBase(item.href)}
-          class="mobile-nav-link"
-        >
-          {item.label}
-        </a>
-      ))}
-      <a href={contactsHref} class="mobile-nav-link mobile-nav-link-accent" data-open-lead-modal>
-        Оставить заявку
+    <div class="header-row">
+      <a class="brand" href={withBase("/")} aria-label="SAGA">
+        <img
+          src={`${import.meta.env.BASE_URL.replace(/\/+$/, "")}/assets/logos/saga_logo_black.svg`}
+          alt="SAGA"
+          class="brand-logo"
+        />
       </a>
-    </nav>
+
+      <nav class="main-nav" aria-label="Основная навигация">
+        {navLinks.map((item) => (
+          <a
+            href={item.href.includes("#") ? item.href : withBase(item.href)}
+            class="nav-link"
+          >
+            {item.label}
+          </a>
+        ))}
+      </nav>
+
+      <button class="menu-toggle" type="button" aria-label="Открыть меню">
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <div class="mobile-nav">
+      <nav class="mobile-nav-inner" aria-label="Мобильная навигация">
+        {navLinks.map((item) => (
+          <a
+            href={item.href.includes("#") ? item.href : withBase(item.href)}
+            class="mobile-nav-link"
+          >
+            {item.label}
+          </a>
+        ))}
+        <a href={contactsHref} class="mobile-nav-link mobile-nav-link-accent" data-open-lead-modal>
+          Оставить заявку
+        </a>
+      </nav>
+    </div>
   </div>
 </header>
 
