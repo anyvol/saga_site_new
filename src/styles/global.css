@@ -197,13 +197,17 @@ html[data-theme="light"] .saga-background-canvas {
 }
 
 .theme-toggle-button {
-  min-height: 28px;
-  padding: 0 10px;
+  width: 42px;
+  height: 34px;
+  padding: 0;
   border-radius: 999px;
   border: 1px solid var(--line);
   background: var(--glass-bg);
   color: var(--text);
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition:
     color 0.2s ease,
     border-color 0.2s ease,
@@ -211,10 +215,36 @@ html[data-theme="light"] .saga-background-canvas {
     transform 0.2s ease;
 }
 
+.theme-toggle-icon {
+  width: 24px;
+  height: 24px;
+  display: block;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.18));
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.theme-toggle-icon-yoda {
+  color: #9bd474;
+}
+
+.theme-toggle-icon-vader {
+  color: #111111;
+}
+
+html[data-theme="dark"] .theme-toggle-icon-vader {
+  color: #eef7f1;
+}
+
 .theme-toggle-button:hover {
   border-color: var(--line-strong);
   background: var(--hover-bg);
   transform: translateY(-1px);
+}
+
+.theme-toggle-button:hover .theme-toggle-icon {
+  transform: scale(1.08);
 }
 
 /* Десктоп: */
