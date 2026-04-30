@@ -43,8 +43,15 @@ export default function ImageLightboxIsland() {
   const openFromTrigger = useCallback((triggerEl) => {
     if (!triggerEl) return;
 
-    const rawSrcs = triggerEl.getAttribute("data-lightbox-srcs");
-    const rawAlts = triggerEl.getAttribute("data-lightbox-alts");
+    const theme = document.documentElement.dataset.theme === "light" ? "light" : "dark";
+    const rawSrcs =
+      triggerEl.getAttribute(
+        theme === "light" ? "data-lightbox-srcs-light" : "data-lightbox-srcs-dark"
+      ) || triggerEl.getAttribute("data-lightbox-srcs");
+    const rawAlts =
+      triggerEl.getAttribute(
+        theme === "light" ? "data-lightbox-alts-light" : "data-lightbox-alts-dark"
+      ) || triggerEl.getAttribute("data-lightbox-alts");
     const rawStartIndex = triggerEl.getAttribute("data-lightbox-start-index");
 
     const parsedSrcs = safeJsonParse(rawSrcs);

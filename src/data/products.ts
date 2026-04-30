@@ -6,6 +6,10 @@ export type ProductImage = {
   alt: string;
   kind: ProductImageKind;
   isPrimary?: boolean;
+  /** Вариант темы изображения (для карточек с разными ракурсами в dark/light). */
+  theme?: "dark" | "light";
+  /** Роль изображения в карточке: превью или слайд в лайтбоксе. */
+  slot?: "card" | "gallery";
   /** Оптимизированное изображение из astro:assets (если найден файл в src/assets/products). */
   optimized?: any;
 };
@@ -45,10 +49,10 @@ const productImageModules = import.meta.glob(
 const buildAssetKey = (options: {
   categoryId: string;
   productId: string;
-  fileName: string;
+  imagePath: string;
 }) => {
-  const { categoryId, productId, fileName } = options;
-  return `../assets/products/${categoryId}/${productId}/${fileName}`;
+  const { categoryId, productId, imagePath } = options;
+  return `../assets/products/${categoryId}/${productId}/${imagePath.replace(/^\/+/, "")}`;
 };
 
 /**
@@ -150,26 +154,39 @@ const normalizeProduct = (input: {
 
     let optimized: any;
 
-    // Пытаемся сопоставить с файлом в src/assets/products для любого формата rawSrc:
-    // и для "file.jpg", и для "/assets/products/.../file.jpg".
+    // Пытаемся сопоставить с файлом в src/assets/products:
+    // 1) по точному относительному пути (поддерживает подпапки m/b),
+    // 2) по basename для обратной совместимости старого формата.
+    const normalizedRaw = rawSrc?.replace(/^\/+/, "");
     const fileName = rawSrc ? rawSrc.split("/").filter(Boolean).pop() : undefined;
-    if (fileName) {
-      const key = buildAssetKey({
-        categoryId,
-        productId: id,
-        fileName,
-      });
+    const candidateKeys = [
+      normalizedRaw
+        ? buildAssetKey({
+            categoryId,
+            productId: id,
+            imagePath: normalizedRaw,
+          })
+        : null,
+      fileName
+        ? buildAssetKey({
+            categoryId,
+            productId: id,
+            imagePath: fileName,
+          })
+        : null,
+    ].filter(Boolean) as string[];
 
-      const mod = productImageModules[key];
+    const mod = candidateKeys
+      .map((key) => productImageModules[key])
+      .find(Boolean);
 
-      if (mod) {
-        const candidate = (mod as any).default ?? mod;
-        optimized = candidate;
-        // Для изображений из src/assets используем итоговый URL от сборщика,
-        // иначе путь вида /assets/products/... приведёт к 404.
-        if (candidate && typeof candidate.src === "string") {
-          src = candidate.src;
-        }
+    if (mod) {
+      const candidate = (mod as any).default ?? mod;
+      optimized = candidate;
+      // Для изображений из src/assets используем итоговый URL от сборщика,
+      // иначе путь вида /assets/products/... приведёт к 404.
+      if (candidate && typeof candidate.src === "string") {
+        src = candidate.src;
       }
     }
 

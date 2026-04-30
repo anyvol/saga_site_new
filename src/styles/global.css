@@ -1799,7 +1799,6 @@ h3 {
 .device-card {
   min-height: 100%;
   display: grid;
-  grid-template-rows: auto 1fr;
   transform-origin: center;
   opacity: 0;
   transform: translateX(0) scale(0.96);
@@ -1946,7 +1945,7 @@ h3 {
   position: relative;
   aspect-ratio: 4 / 3;
   background: var(--media-bg);
-  padding: 24px;
+  padding: 0;
 }
 
 .device-card-media {
@@ -1961,7 +1960,7 @@ h3 {
   border: none;
   outline: none;
   cursor: pointer;
-  padding: 24px; /* переопределяем на случай дефолта для button */
+  padding: 0; /* убираем внутренние отступы для точного кадрирования */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1985,6 +1984,18 @@ h3 {
   max-height: 100%;
   object-fit: contain;
   object-position: center;
+}
+
+.theme-image-light {
+  display: none;
+}
+
+html[data-theme="light"] .theme-image-dark {
+  display: none;
+}
+
+html[data-theme="light"] .theme-image-light {
+  display: block;
 }
 
 .device-card-body {
@@ -2374,12 +2385,11 @@ h3 {
   .device-card-media {
     aspect-ratio: 4 / 3;
     min-height: min(280px, 48vh);
-    padding: 12px;
+    padding: 0;
   }
 
   .device-card {
     grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
     min-height: 100%;
   }
 
@@ -2443,7 +2453,7 @@ h3 {
     aspect-ratio: auto;
     min-height: 120px;
     max-height: clamp(140px, 30svh, 320px);
-    padding: 12px 16px;
+    padding: 0;
   }
 
   .carousel-shell {
@@ -2457,7 +2467,7 @@ h3 {
 
   .device-card-media-trigger,
   .product-media-trigger {
-    padding: 12px 16px;
+    padding: 0;
   }
 
   .device-card-body {
@@ -2540,7 +2550,7 @@ h3 {
   .product-media {
     min-height: 100px;
     max-height: clamp(100px, 24svh, 200px);
-    padding: 8px 12px;
+    padding: 0;
   }
 
   .carousel-shell {
@@ -2554,7 +2564,7 @@ h3 {
 
   .device-card-media-trigger,
   .product-media-trigger {
-    padding: 8px 12px;
+    padding: 0;
   }
 
   .device-card-body {

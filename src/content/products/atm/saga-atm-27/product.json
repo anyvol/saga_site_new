@@ -18,10 +18,61 @@
   "sectionBooklet": "/assets/booklets/atm_booklet.pdf",
   "images": [
     {
-      "src": "saga_atm_27_front.png",
-      "alt": "SAGA ATM 27″ — фронтальный ракурс",
+      "src": "m/saga-atm-27-m-close-c.png",
+      "alt": "SAGA ATM 27″ — темная версия, фронтальный ракурс (close-c)",
       "kind": "front",
-      "isPrimary": true
+      "isPrimary": true,
+      "theme": "dark",
+      "slot": "card"
+    },
+    {
+      "src": "m/saga-atm-27-m-f.png",
+      "alt": "SAGA ATM 27″ — темная версия, ракурс f",
+      "kind": "angle",
+      "theme": "dark",
+      "slot": "gallery"
+    },
+    {
+      "src": "m/saga-atm-27-m-34.png",
+      "alt": "SAGA ATM 27″ — темная версия, ракурс 3/4",
+      "kind": "angle",
+      "theme": "dark",
+      "slot": "gallery"
+    },
+    {
+      "src": "m/saga-atm-27-m-close.png",
+      "alt": "SAGA ATM 27″ — темная версия, close",
+      "kind": "detail",
+      "theme": "dark",
+      "slot": "gallery"
+    },
+    {
+      "src": "b/saga-atm-27-b-close-c.png",
+      "alt": "SAGA ATM 27″ — светлая версия, фронтальный ракурс (close-c)",
+      "kind": "front",
+      "theme": "light",
+      "slot": "card"
+    },
+    {
+      "src": "b/saga-atm-27-b-f.png",
+      "alt": "SAGA ATM 27″ — светлая версия, ракурс f",
+      "kind": "angle",
+      "theme": "light",
+      "slot": "gallery"
+    },
+    {
+      "src": "b/saga-atm-27-b-34.png",
+      "alt": "SAGA ATM 27″ — светлая версия, ракурс 3/4",
+      "kind": "angle",
+      "theme": "light",
+      "slot": "gallery"
+    },
+    {
+      "src": "b/saga-atm-27-b-close.png",
+      "alt": "SAGA ATM 27″ — светлая версия, close",
+      "kind": "detail",
+      "theme": "light",
+      "slot": "gallery"
     }
   ],
   "longDescription": "SAGA ATM 27″ — универсальный банкомат линейки SAGA с 27-дюймовым экраном. Основная модель для массовых сценариев обслуживания в банковских отделениях.",
