@@ -222,7 +222,7 @@ export const deviceSections: DeviceSection[] = [
   },
   {
     id: "ssc",
-    navLabel: "Кассы СО",
+    navLabel: "КСО",
     eyebrow: "Кассы самообслуживания",
     title: "Кассы самообслуживания для ритейла.",
     intro:
@@ -284,7 +284,7 @@ export const deviceSections: DeviceSection[] = [
   },
   {
     id: "adm",
-    navLabel: "ADM",
+    navLabel: "АДМ",
     eyebrow: "Автоматические депозитные машины",
     title: "Автоматические депозитные машины SAGA.",
     intro:
@@ -363,7 +363,7 @@ export const deviceSections: DeviceSection[] = [
   },
   {
     id: "info",
-    navLabel: "Инфокиоски",
+    navLabel: "ТИ и ПТ",
     eyebrow: "Информационные платежные терминалы",
     title: "Информационные киоски и платежные терминалы.",
     intro:
@@ -391,7 +391,7 @@ export const deviceSections: DeviceSection[] = [
   },
   {
     id: "charging",
-    navLabel: "Зарядные станции",
+    navLabel: "ЭЗС",
     eyebrow: "Зарядные станции",
     title: "Зарядные станции для электромобилей.",
     intro:

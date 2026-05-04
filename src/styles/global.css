@@ -1526,7 +1526,8 @@ h3 {
   background: var(--accent-glow);
 }
 
-@media (max-width: 1240px) {
+/* Подписи только при ширине >1570px; ниже — только точки */
+@media (max-width: 1570px) {
   .section-dot-label {
     display: none;
   }
