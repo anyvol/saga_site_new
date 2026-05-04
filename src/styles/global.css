@@ -50,6 +50,8 @@
   --call-bg: rgba(6, 95, 70, 0.24);
   --call-border: rgba(52, 211, 153, 0.32);
   --desktop-footer-h: 72px;
+  /* JS: ширина вертикального скроллбара у #snap-shell или у корня — чтобы fixed-header совпадал с контентом */
+  --scrollbar-width: 0px;
 }
 
 html[data-theme="light"] {
@@ -253,7 +255,7 @@ html[data-theme="dark"] .theme-toggle-icon-vader {
     position: fixed;
     bottom: 0;
     left: 0;
-    right: 0;
+    right: var(--scrollbar-width, 0px);
     transform: translateY(100%);
     transition: transform 0.35s ease;
     background: var(--bg);
@@ -304,7 +306,10 @@ select {
 
 .site-header {
   position: fixed;
-  inset: 0 0 auto 0;
+  top: 0;
+  left: 0;
+  right: var(--scrollbar-width, 0px);
+  bottom: auto;
   z-index: 50;
   display: flex;
   justify-content: center;
@@ -1457,12 +1462,18 @@ h3 {
   --nav-dot-size: 20px;
   --nav-dot-section-active-h: 56px;
   --nav-dot-carousel-active-w: 64px;
+  --section-dots-gutter-from-container: 12px;
 }
 
 .section-dots {
   position: fixed;
   z-index: 45;
-  right: 22px;
+  right: calc(
+    max(
+      calc(22px + env(safe-area-inset-right, 0px)),
+      calc((100vw - var(--container)) / 2 - var(--section-dots-gutter-from-container))
+    ) + var(--scrollbar-width, 0px)
+  );
   top: 50%;
   transform: translateY(-50%);
   display: flex;
@@ -1870,7 +1881,7 @@ h3 {
     align-items: center;
     width: var(--carousel-arrow-zone-w);
     height: 100%;
-    background: rgba(118, 126, 123, 0.2);
+    background: rgba(118, 126, 123, 0.0);
     backdrop-filter: blur(14px) saturate(130%);
     -webkit-backdrop-filter: blur(14px) saturate(130%);
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
