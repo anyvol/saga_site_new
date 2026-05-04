@@ -1452,7 +1452,12 @@ h3 {
   object-fit: contain;
 }
 
-/* dots */
+/* dots — маркеры section/carousel одинакового базового размера (×2 от 10px) */
+:root {
+  --nav-dot-size: 20px;
+  --nav-dot-section-active-h: 56px;
+  --nav-dot-carousel-active-w: 64px;
+}
 
 .section-dots {
   position: fixed;
@@ -1463,7 +1468,7 @@ h3 {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 10px;
+  gap: 20px;
   max-width: min(calc(100vw - 32px), 420px);
   pointer-events: none;
 }
@@ -1489,29 +1494,24 @@ h3 {
 }
 
 .section-dot-label {
+  display: inline-block;
+  max-width: 20ch;
   font-size: 12px;
-  line-height: 1.25;
+  line-height: 1.35;
   letter-spacing: 0.01em;
   color: var(--muted);
-  opacity: 0.72;
   text-align: right;
-  white-space: nowrap;
-  max-width: min(36vw, 260px);
+  vertical-align: middle;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: normal;
   overflow: hidden;
-  text-overflow: ellipsis;
-  transition: color 0.2s ease, opacity 0.2s ease;
-}
-
-.section-dot-link:hover .section-dot-label,
-.section-dot-link:focus-visible .section-dot-label {
-  opacity: 1;
-  color: var(--text);
 }
 
 .section-dot {
   flex-shrink: 0;
-  width: 10px;
-  height: 10px;
+  width: var(--nav-dot-size);
+  height: var(--nav-dot-size);
   border-radius: 999px;
   background: var(--line-strong);
   border: 1px solid var(--glass-border);
@@ -1522,14 +1522,95 @@ h3 {
 }
 
 .section-dot-link.is-active .section-dot {
-  height: 28px;
+  height: var(--nav-dot-section-active-h);
   background: var(--accent-glow);
 }
 
-/* Подписи только при ширине >1570px; ниже — только точки */
+/* Подписи скрыты при узком десктопе */
 @media (max-width: 1570px) {
   .section-dot-label {
     display: none;
+  }
+}
+
+/* Широкий экран: подпись только при hover/focus; в покое label свёрнут; dot увеличивается при наведении */
+@media (min-width: 1571px) {
+  .section-dot-link {
+    position: relative;
+  }
+
+  .section-dot-link:hover,
+  .section-dot-link:focus-visible {
+    z-index: 2;
+  }
+
+  .section-dot-label {
+    display: inline-block;
+    position: absolute;
+    right: calc(var(--nav-dot-size) * 1.35 + 14px);
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20ch;
+    max-width: 20ch;
+    min-width: 20ch;
+    text-align: right;
+    pointer-events: none;
+  }
+
+  /* Скрытие: сначала гасим текст при полном блоке, затем сворачиваем — без переноса 1→2→3 строк при сжатии */
+  .section-dot-link:not(:hover):not(:focus-visible) .section-dot-label {
+    max-height: 0;
+    width: 0;
+    max-width: 0;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    visibility: hidden;
+    overflow: hidden;
+    transition:
+      opacity 0.1s ease,
+      color 0.08s ease,
+      visibility 0s linear 0.34s,
+      max-height 0.22s ease 0.12s,
+      max-width 0.22s ease 0.12s;
+  }
+
+  /* Показ: сначала место и ширина, потом текст (label вне потока — соседние точки не разъезжаются) */
+  .section-dot-link:hover .section-dot-label,
+  .section-dot-link:focus-visible .section-dot-label {
+    max-height: 12em;
+    width: 20ch;
+    max-width: 20ch;
+    opacity: 1;
+    visibility: visible;
+    color: var(--text);
+    pointer-events: auto;
+    overflow: visible;
+    transition:
+      max-height 0.22s ease,
+      max-width 0.22s ease,
+      opacity 0.16s ease 0.07s,
+      visibility 0s linear 0s,
+      color 0.14s ease 0.07s;
+  }
+
+  /* Сброс scale после сворачивания подписи; height без задержки — смена активной секции при скролле */
+  .section-dot-link:not(:hover):not(:focus-visible) .section-dot {
+    transition:
+      transform 0.22s ease 0.12s,
+      background-color 0.22s ease,
+      height 0.22s ease 0s;
+  }
+
+  .section-dot-link:hover .section-dot,
+  .section-dot-link:focus-visible .section-dot {
+    transform: scale(1.28);
+    transform-origin: 100% 50%;
+    transition:
+      transform 0.2s ease,
+      background-color 0.22s ease,
+      height 0.22s ease;
   }
 }
 
@@ -1676,7 +1757,7 @@ h3 {
   position: relative;
   margin-top: 10px;
   --device-card-h: clamp(500px, 62svh, 680px);
-  --carousel-arrow-offset: clamp(18px, 4.6vw, 72px);
+  --carousel-arrow-zone-w: clamp(52px, 4.2vw, 76px);
 }
 
 .line-products-cta {
@@ -1695,8 +1776,7 @@ h3 {
   flex-direction: column;
 }
 
-.carousel-dots,
-.carousel-controls {
+.carousel-dots {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -1708,27 +1788,24 @@ h3 {
 }
 
 .carousel-btn {
-  width: 52px;
-  height: 52px;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: var(--surface-strong);
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   color: var(--text);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-soft);
+  box-shadow: none;
   transition:
-    transform 0.22s ease,
-    border-color 0.22s ease,
-    background-color 0.22s ease,
+    color 0.22s ease,
     opacity 0.22s ease;
 }
 
 .carousel-btn:hover {
-  transform: translateY(-1px);
-  border-color: var(--line-strong);
+  color: var(--accent-glow);
 }
 
 .carousel-btn:disabled {
@@ -1739,30 +1816,7 @@ h3 {
 }
 
 .carousel-controls {
-  position: absolute;
-  inset: 0;
-  height: var(--device-card-h);
-  pointer-events: none;
-}
-
-.carousel-controls .carousel-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: auto;
-  opacity: 0.92;
-}
-
-.carousel-controls .carousel-btn:hover {
-  opacity: 1;
-}
-
-.carousel-btn[data-carousel-prev] {
-  left: calc(-1 * var(--carousel-arrow-offset));
-}
-
-.carousel-btn[data-carousel-next] {
-  right: calc(-1 * var(--carousel-arrow-offset));
+  display: none;
 }
 
 /* Десктоп: фото сверху, текст снизу (как на мобиле); карточка растёт при раскрытии */
@@ -1775,13 +1829,21 @@ h3 {
   .carousel-shell {
     min-height: 0;
     overflow: visible;
+    grid-template-areas:
+      "carousel"
+      "nav";
   }
 
   .product-carousel {
+    grid-area: carousel;
     grid-auto-columns: 100%;
     padding-inline: 0;
     scroll-padding-inline: 0;
     overflow-x: hidden;
+  }
+
+  .carousel-nav {
+    grid-area: nav;
   }
 
   .device-card {
@@ -1790,6 +1852,59 @@ h3 {
     grid-template-columns: minmax(360px, 54%) minmax(320px, 46%);
     grid-template-rows: 1fr;
     min-height: var(--device-card-h);
+  }
+
+  .carousel-controls {
+    grid-area: carousel;
+    align-self: stretch;
+    z-index: 3;
+    display: grid;
+    grid-template-columns: minmax(360px, 54%) minmax(320px, 46%);
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .carousel-control-zone {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    width: var(--carousel-arrow-zone-w);
+    height: 100%;
+    background: rgba(118, 126, 123, 0.2);
+    backdrop-filter: blur(14px) saturate(130%);
+    -webkit-backdrop-filter: blur(14px) saturate(130%);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    transition: opacity 0.22s ease;
+  }
+
+  .carousel-control-zone.is-disabled {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .carousel-control-zone-prev {
+    grid-column: 1;
+    justify-content: center;
+    justify-self: start;
+    border-radius: var(--radius-xl) 0 0 var(--radius-xl);
+  }
+
+  .carousel-control-zone-next {
+    grid-column: 2;
+    justify-content: flex-end;
+    justify-self: end;
+    border-radius: 0 var(--radius-xl) var(--radius-xl) 0;
+  }
+
+  .carousel-controls .carousel-btn {
+    pointer-events: auto;
+    opacity: 0.88;
+    font-size: 28px;
+    line-height: 1;
+  }
+
+  .carousel-controls .carousel-btn:hover {
+    opacity: 1;
   }
 
   .device-card:not(.is-active) {
@@ -1817,13 +1932,18 @@ h3 {
 
   .device-card-body {
     padding: clamp(24px, 3svh, 36px);
+    padding-right: calc(clamp(24px, 3svh, 36px) + var(--carousel-arrow-zone-w));
     gap: clamp(12px, 1.7svh, 18px);
+  }
+
+  .device-card-body > * {
+    max-width: calc(100% - var(--carousel-arrow-zone-w));
   }
 }
 
 @media (min-width: 861px) and (max-width: 1180px) {
   .carousel-shell {
-    --carousel-arrow-offset: clamp(8px, 2.8vw, 24px);
+    --carousel-arrow-zone-w: clamp(46px, 4vw, 64px);
   }
 }
 
@@ -2180,8 +2300,8 @@ html[data-theme="light"] .theme-image-light {
 }
 
 .carousel-dot {
-  width: 10px;
-  height: 10px;
+  width: var(--nav-dot-size);
+  height: var(--nav-dot-size);
   border-radius: 999px;
   border: 0;
   background: var(--line-strong);
@@ -2193,7 +2313,7 @@ html[data-theme="light"] .theme-image-light {
 }
 
 .carousel-dot.is-active {
-  width: 32px;
+  width: var(--nav-dot-carousel-active-w);
   background: var(--accent-glow);
 }
 
@@ -2508,7 +2628,7 @@ html[data-theme="light"] .theme-image-light {
 
   .carousel-shell {
     --device-card-h: clamp(420px, 58svh, 560px);
-    --carousel-arrow-offset: clamp(14px, 3.8vw, 64px);
+    --carousel-arrow-zone-w: clamp(48px, 3.8vw, 64px);
   }
 
   .device-card {
@@ -2522,6 +2642,7 @@ html[data-theme="light"] .theme-image-light {
 
   .device-card-body {
     padding: clamp(14px, 2svh, 22px);
+    padding-right: calc(clamp(14px, 2svh, 22px) + var(--carousel-arrow-zone-w));
     gap: clamp(8px, 1.2svh, 14px);
     overflow-y: auto;
     overscroll-behavior-y: contain;
@@ -2605,7 +2726,7 @@ html[data-theme="light"] .theme-image-light {
 
   .carousel-shell {
     --device-card-h: clamp(360px, 54svh, 480px);
-    --carousel-arrow-offset: clamp(12px, 3.4vw, 56px);
+    --carousel-arrow-zone-w: clamp(44px, 3.4vw, 56px);
   }
 
   .device-card {
@@ -2619,6 +2740,7 @@ html[data-theme="light"] .theme-image-light {
 
   .device-card-body {
     padding: 12px;
+    padding-right: calc(12px + var(--carousel-arrow-zone-w));
     gap: 6px;
   }
 
@@ -2724,6 +2846,10 @@ html[data-theme="light"] .theme-image-light {
     transition: none !important;
     transform: none !important;
     opacity: 1 !important;
+  }
+
+  .section-dot-label {
+    transition: none !important;
   }
 
   .hero-video {

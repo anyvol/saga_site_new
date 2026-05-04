@@ -15,6 +15,8 @@ export default function ProductCarouselIsland({ sectionId }) {
     const slides = Array.from(wrap.querySelectorAll("[data-slide]"));
     const prev = wrap.querySelector("[data-carousel-prev]");
     const next = wrap.querySelector("[data-carousel-next]");
+    const prevZone = wrap.querySelector("[data-carousel-prev-zone]");
+    const nextZone = wrap.querySelector("[data-carousel-next-zone]");
     const dots = Array.from(wrap.querySelectorAll("[data-carousel-dot]"));
     const count = wrap.querySelector("[data-carousel-count]");
 
@@ -117,18 +119,32 @@ export default function ProductCarouselIsland({ sectionId }) {
         count.textContent = `${activeIndex + 1} / ${slides.length}`;
       }
 
-      if (prev) prev.disabled = activeIndex === 0;
-      if (next) next.disabled = activeIndex === slides.length - 1;
+      const isPrevDisabled = activeIndex === 0;
+      const isNextDisabled = activeIndex === slides.length - 1;
+
+      if (prev) {
+        prev.disabled = isPrevDisabled;
+        prev.setAttribute("aria-disabled", String(isPrevDisabled));
+      }
+      if (next) {
+        next.disabled = isNextDisabled;
+        next.setAttribute("aria-disabled", String(isNextDisabled));
+      }
+      prevZone?.classList.toggle("is-disabled", isPrevDisabled);
+      nextZone?.classList.toggle("is-disabled", isNextDisabled);
 
     };
 
-    prev?.addEventListener("click", () => {
+    const onPrevClick = () => {
       goTo(getActiveIndex() - 1);
-    });
+    };
 
-    next?.addEventListener("click", () => {
+    const onNextClick = () => {
       goTo(getActiveIndex() + 1);
-    });
+    };
+
+    prev?.addEventListener("click", onPrevClick);
+    next?.addEventListener("click", onNextClick);
 
     dots.forEach((dot, index) => {
       dot.addEventListener("click", () => goTo(index));
@@ -224,12 +240,8 @@ export default function ProductCarouselIsland({ sectionId }) {
 
     return () => {
       if (snapTimer) clearTimeout(snapTimer);
-      prev?.removeEventListener("click", () => {
-        goTo(getActiveIndex() - 1);
-      });
-      next?.removeEventListener("click", () => {
-        goTo(getActiveIndex() + 1);
-      });
+      prev?.removeEventListener("click", onPrevClick);
+      next?.removeEventListener("click", onNextClick);
       dots.forEach((dot) => {
         dot.replaceWith(dot.cloneNode(true));
       });

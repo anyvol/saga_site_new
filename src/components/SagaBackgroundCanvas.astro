@@ -32,9 +32,11 @@
     let height = 0;
     let virtualHeight = 0;
     let dpr = 1;
-    let rafId = 0;
+    let animationRafId = 0;
+    let drawRafId = 0;
     let lastFrame = 0;
     let resizeTimer = 0;
+    let boundScrollRoot: HTMLElement | null = null;
     let ribbons: RibbonLine[][] = [];
 
     const ribbonConfig: RibbonConfig[] = [
@@ -165,11 +167,23 @@
       ctx.shadowBlur = 0;
     };
 
-    const stop = () => {
-      if (rafId) {
-        window.cancelAnimationFrame(rafId);
-        rafId = 0;
+    const stopAnimationLoop = () => {
+      if (animationRafId) {
+        window.cancelAnimationFrame(animationRafId);
+        animationRafId = 0;
       }
+    };
+
+    const cancelScheduledDraw = () => {
+      if (drawRafId) {
+        window.cancelAnimationFrame(drawRafId);
+        drawRafId = 0;
+      }
+    };
+
+    const stop = () => {
+      stopAnimationLoop();
+      cancelScheduledDraw();
       ctx?.clearRect(0, 0, width, height);
     };
 
@@ -184,7 +198,7 @@
         lastFrame = now;
       }
 
-      rafId = window.requestAnimationFrame(tick);
+      animationRafId = window.requestAnimationFrame(tick);
     };
 
     const start = () => {
@@ -195,7 +209,7 @@
       draw();
 
       if (!reduceMotionQuery.matches) {
-        rafId = window.requestAnimationFrame(tick);
+        animationRafId = window.requestAnimationFrame(tick);
       }
     };
 
@@ -213,26 +227,46 @@
     };
 
     const scheduleDraw = () => {
-      if (!isDarkTheme() || rafId) return;
-      rafId = window.requestAnimationFrame((now) => {
-        rafId = 0;
+      if (!isDarkTheme() || drawRafId) return;
+      drawRafId = window.requestAnimationFrame((now) => {
+        drawRafId = 0;
         draw(now);
       });
     };
 
+    const onScroll = () => {
+      scheduleDraw();
+    };
+
     const bindScrollRoot = () => {
       const scrollRoot = getScrollRoot();
-      scrollRoot?.addEventListener("scroll", scheduleDraw, { passive: true });
-      window.addEventListener("scroll", scheduleDraw, { passive: true });
+      if (scrollRoot !== boundScrollRoot) {
+        boundScrollRoot?.removeEventListener("scroll", onScroll);
+        scrollRoot?.addEventListener("scroll", onScroll, { passive: true });
+        boundScrollRoot = scrollRoot;
+      }
     };
 
     window.addEventListener("resize", () => {
       scheduleRestart();
     });
-    window.addEventListener("load", scheduleRestart);
+    window.addEventListener("load", () => {
+      bindScrollRoot();
+      scheduleRestart();
+    });
+    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("saga:theme-change", handleThemeChange);
     reduceMotionQuery.addEventListener("change", start);
-    bindScrollRoot();
-    start();
+
+    const init = () => {
+      bindScrollRoot();
+      start();
+    };
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init, { once: true });
+    } else {
+      init();
+    }
   }
 </script>

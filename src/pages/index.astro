@@ -340,22 +340,26 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
             </div>
 
             <div class="carousel-controls">
-              <button
-                type="button"
-                class="carousel-btn"
-                data-carousel-prev
-                aria-label="Предыдущая модель"
-              >
-                <span>←</span>
-              </button>
-              <button
-                type="button"
-                class="carousel-btn"
-                data-carousel-next
-                aria-label="Следующая модель"
-              >
-                <span>→</span>
-              </button>
+              <div class="carousel-control-zone carousel-control-zone-prev" data-carousel-prev-zone>
+                <button
+                  type="button"
+                  class="carousel-btn"
+                  data-carousel-prev
+                  aria-label="Предыдущая модель"
+                >
+                  <span>←</span>
+                </button>
+              </div>
+              <div class="carousel-control-zone carousel-control-zone-next" data-carousel-next-zone>
+                <button
+                  type="button"
+                  class="carousel-btn"
+                  data-carousel-next
+                  aria-label="Следующая модель"
+                >
+                  <span>→</span>
+                </button>
+              </div>
             </div>
 
             <div class="carousel-nav" aria-label="Навигация по слайдам">
