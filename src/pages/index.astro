@@ -136,10 +136,13 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
     {sections.map((section, index) => (
       <a
         href={`#${section.id}`}
-        class={`section-dot ${index === 0 ? "is-active" : ""}`}
+        class={`section-dot-link ${index === 0 ? "is-active" : ""}`}
         data-dot={section.id}
         aria-label={section.label}
-      ></a>
+      >
+        <span class="section-dot-label" aria-hidden="true">{section.label}</span>
+        <span class="section-dot" aria-hidden="true"></span>
+      </a>
     ))}
   </aside>
 
@@ -582,115 +585,6 @@ const sectionsWithProducts: (typeof deviceSections[number] & { products: Product
     );
 
     sectionNodes.forEach((section) => sectionObserver.observe(section));
-
-    const initDesktopWheelPaging = () => {
-      if (!snapShell || sectionNodes.length < 2) return;
-      if (window.innerWidth <= 860) return;
-
-      let wheelLock = false;
-      let wheelTimer = 0;
-      let accumulated = 0;
-      let accDirection = 0;
-      let accResetTimer = 0;
-      const WHEEL_THRESHOLD = 220;
-      const ACC_RESET_MS = 180;
-      const LOCK_MS = 580;
-
-      const releaseWheelLock = () => {
-        wheelLock = false;
-        wheelTimer = 0;
-      };
-
-      const resetAccumulator = () => {
-        accumulated = 0;
-        accDirection = 0;
-        accResetTimer = 0;
-      };
-
-      const getClosestSectionIndex = () => {
-        const shellTop = snapShell.getBoundingClientRect().top;
-        const shellCenter = shellTop + snapShell.clientHeight / 2;
-        let bestIndex = 0;
-        let bestDistance = Infinity;
-
-        sectionNodes.forEach((section, index) => {
-          const rect = section.getBoundingClientRect();
-          const sectionCenter = rect.top + rect.height / 2;
-          const distance = Math.abs(sectionCenter - shellCenter);
-          if (distance < bestDistance) {
-            bestDistance = distance;
-            bestIndex = index;
-          }
-        });
-
-        return bestIndex;
-      };
-
-      const isInteractingWithCard = () => {
-        const active = document.activeElement;
-        if (active && active.closest && active.closest('.device-card, .carousel-shell')) return true;
-        const hovered = document.querySelector('.device-card:hover, .carousel-shell:hover, .carousel-btn:hover');
-        if (hovered) {
-          const openDetails = hovered.closest('.device-card')?.querySelector('details[open]')
-            || hovered.querySelector?.('details[open]');
-          if (openDetails) return true;
-        }
-        return false;
-      };
-
-      const onDesktopWheel = (event) => {
-        if (window.innerWidth <= 860) return;
-        if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) return;
-        if (Math.abs(event.deltaY) < 2) return;
-
-        event.preventDefault();
-        if (wheelLock) return;
-
-        if (isInteractingWithCard()) {
-          resetAccumulator();
-          return;
-        }
-
-        const direction = event.deltaY > 0 ? 1 : -1;
-
-        if (accDirection !== 0 && accDirection !== direction) {
-          resetAccumulator();
-        }
-
-        accDirection = direction;
-        accumulated += Math.abs(event.deltaY);
-
-        if (accResetTimer) window.clearTimeout(accResetTimer);
-        accResetTimer = window.setTimeout(resetAccumulator, ACC_RESET_MS);
-
-        if (accumulated < WHEEL_THRESHOLD) return;
-
-        resetAccumulator();
-
-        const currentIndex = getClosestSectionIndex();
-        const targetIndex = Math.max(
-          0,
-          Math.min(sectionNodes.length - 1, currentIndex + direction)
-        );
-        if (targetIndex === currentIndex) return;
-
-        wheelLock = true;
-        if (wheelTimer) window.clearTimeout(wheelTimer);
-        wheelTimer = window.setTimeout(releaseWheelLock, LOCK_MS);
-
-        sectionNodes[targetIndex].scrollIntoView({
-          behavior: prefersReducedMotion.matches ? "auto" : "smooth",
-          block: "start",
-        });
-      };
-
-      snapShell.addEventListener("wheel", onDesktopWheel, {
-        passive: false,
-        capture: true,
-      });
-    };
-
-    initDesktopWheelPaging();
 
     const initMobileHeroMotion = () => {
       if (!heroSection || !(heroVideo instanceof HTMLElement)) return;

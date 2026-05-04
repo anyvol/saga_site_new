@@ -420,15 +420,13 @@ html[data-theme="light"] .brand-logo {
 .snap-shell {
   height: 100svh;
   overflow-y: auto;
-  scroll-snap-type: y proximity;
+  scroll-snap-type: none;
   scroll-padding-top: calc(var(--header-h) + 10px);
 }
 
 .screen {
   position: relative;
   min-height: 100svh;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
   display: grid;
   align-items: center;
   padding: calc(var(--header-h) + 0px) 0 40px;
@@ -1462,11 +1460,56 @@ h3 {
   right: 22px;
   top: 50%;
   transform: translateY(-50%);
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   gap: 10px;
+  max-width: min(calc(100vw - 32px), 420px);
+  pointer-events: none;
+}
+
+.section-dots > .section-dot-link {
+  pointer-events: auto;
+}
+
+.section-dot-link {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+  outline: none;
+}
+
+.section-dot-link:focus-visible {
+  border-radius: 10px;
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.section-dot-label {
+  font-size: 12px;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+  color: var(--muted);
+  opacity: 0.72;
+  text-align: right;
+  white-space: nowrap;
+  max-width: min(36vw, 260px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.section-dot-link:hover .section-dot-label,
+.section-dot-link:focus-visible .section-dot-label {
+  opacity: 1;
+  color: var(--text);
 }
 
 .section-dot {
+  flex-shrink: 0;
   width: 10px;
   height: 10px;
   border-radius: 999px;
@@ -1478,9 +1521,15 @@ h3 {
     height 0.22s ease;
 }
 
-.section-dot.is-active {
+.section-dot-link.is-active .section-dot {
   height: 28px;
   background: var(--accent-glow);
+}
+
+@media (max-width: 1240px) {
+  .section-dot-label {
+    display: none;
+  }
 }
 
 /* reveal */
@@ -2667,6 +2716,7 @@ html[data-theme="light"] .theme-image-light {
   .contact-icon,
   .header-cta,
   .nav-link,
+  .section-dot-link,
   .section-dot,
   .carousel-btn,
   .carousel-dot {
